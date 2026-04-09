@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../frontend/styles/styles.css">
+    <title>HDIMS</title>
+</head>
+
+<body>
+    <div class="bloodflow">
+        <div class="rbc"></div>
+        <div class="rbc"></div>
+        <div class="wbc"></div>
+        <div class="rbc"></div>
+        <div class="rbc"></div>
+        <div class="wbc"></div>
+        <div class="rbc"></div>
+        <div class="rbc"></div>
+        <div class="rbc"></div>
+        <div class="wbc"></div>
+        <div class="rbc"></div>
+        <div class="rbc"></div>
+        <div class="wbc"></div>
+        <div class="rbc"></div>
+        <div class="rbc"></div>
+        <div class="rbc"></div>
+        <div class="wbc"></div>
+        <div class="rbc"></div>
+    </div>
+    <div class="main part">
+        <h1>HDIMS</h1>
+        <h3>Health Data Information and Management System</h3>
+        <p>The future to medical data organisation</p>
+        <div class="heart-beat">
+            <button id="get-started"><img
+                    src="c:\Users\ASUS\HDIMS\Health-Data-information-and-Management-System\heart.png" alt=""></button>
+        </div>
+        <div class="cards-container"></div>
+    </div>
+    <script>
+        document.getElementById("get-started").addEventListener("click", () => {
+            document.getElementById("get-started").style.display = 'none';
+
+            document.querySelector(".cards-container").innerHTML = `
+        <div class="main-container">
+    <div class="card1"> 
+        <h2>Doctor</h2>
+        <p>Some text on this webpage</p>
+        <a href="doc_login.html"><button>Log in</button></a>
+    </div>
+        <div class="card2">
+        <h2>Patient</h2>
+        <p>Some text on this webpage</p>
+        <a href="pat_login.html"><button>Log in</button></a>
+    </div>
+        <div class="card3">
+        <h2>Policy Maker</h2>
+        <p>Some text on this webpage</p>
+        <a href="poli_login.html"><button>Log in</button></a>
+
+    </div>
+</div>`
+        })
+    </script>
+</body>
+
+</html>
