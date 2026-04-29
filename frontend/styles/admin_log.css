@@ -233,3 +233,71 @@ body::after {
   color: var(--red-mid);
   border-color: var(--red-mid);
 }
+
+/* ══════════════════════════════════
+   MOBILE RESPONSIVE — Admin Login
+══════════════════════════════════ */
+@media (max-width: 480px) {
+  body {
+    padding: 24px 16px;
+    overflow: auto;
+  }
+
+  /* Scale down ambient orbs for small screens */
+  body::before {
+    width: 220px;
+    height: 220px;
+    top: -40px;
+    right: -30px;
+    filter: blur(60px);
+  }
+  body::after {
+    width: 180px;
+    height: 180px;
+    bottom: -30px;
+    left: -20px;
+    filter: blur(60px);
+  }
+
+  .log-in-card {
+    width: min(420px, 94vw);
+    padding: 36px 24px 32px;
+    gap: 12px;
+    border-radius: 20px;
+  }
+
+  .log-in-card h1 {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+  }
+
+  .log-in-card label {
+    font-size: 0.7rem;
+  }
+
+  .log-in-card input[type="text"],
+  .log-in-card input[type="password"] {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+
+  #submit-but {
+    padding: 13px;
+    font-size: 0.95rem;
+  }
+
+  #error-box {
+    font-size: 0.8rem;
+    padding: 10px 14px;
+  }
+}
+
+@media (max-width: 360px) {
+  .log-in-card {
+    padding: 28px 18px 24px;
+  }
+
+  .log-in-card h1 {
+    font-size: 1.35rem;
+  }
+}
