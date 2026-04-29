@@ -1,4 +1,4 @@
-import { auth } from "../firebaseConfig.js";
+import { auth } from "../../firebaseConfig.js";
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const button = document.getElementById("submit-but");
