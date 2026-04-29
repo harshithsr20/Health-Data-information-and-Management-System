@@ -6,6 +6,15 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>St. Grace Medical - Staff Management Dashboard</title>
+    <script>
+        const originalWarn = console.warn;
+        console.warn = function (...args) {
+            if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) {
+                return;
+            }
+            originalWarn.apply(console, args);
+        };
+    </script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
@@ -140,7 +149,7 @@
                 <span class="material-symbols-outlined" data-icon="local_hospital">local_hospital</span>
             </div>
             <div>
-                <h1 class="text-base font-bold text-primary leading-tight tracking-tight">St. Grace Medical</h1>
+                <h1 id="hospital-name" class="text-base font-bold text-primary leading-tight tracking-tight">Loading...</h1>
                 <p class="font-body-md text-[11px] text-slate-500 font-medium">Administration</p>
             </div>
         </div>
@@ -339,6 +348,7 @@
             day: 'numeric'
         });
     </script>
+    <script type="module" src="hosp_admin.js"></script>
 </body>
 
 </html>
