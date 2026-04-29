@@ -6,6 +6,15 @@
         <meta charset="utf-8" />
         <meta content="width=device-width, initial-scale=1.0" name="viewport" />
         <title>St. Grace Medical - Staff Management Dashboard</title>
+        <script>
+                const originalWarn = console.warn;
+                console.warn = function (...args) {
+                        if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) {
+                                return;
+                        }
+                        originalWarn.apply(console, args);
+                };
+        </script>
         <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
                 rel="stylesheet" />
@@ -138,19 +147,14 @@
                                 <span class="material-symbols-outlined" data-icon="local_hospital">local_hospital</span>
                         </div>
                         <div>
-                                <h1 class="text-base font-bold text-primary leading-tight tracking-tight">St. Grace
-                                        Medical</h1>
+                                <h1 id="hospital-name"
+                                        class="text-base font-bold text-primary leading-tight tracking-tight">Loading...
+                                </h1>
                                 <p class="font-body-md text-[11px] text-slate-500 font-medium">Administration</p>
                         </div>
                 </div>
                 <!-- Navigation Links -->
                 <nav class="flex-1 space-y-2 -mx-2">
-                        <a class="sidebar-item flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-primary hover:bg-slate-50 rounded-xl transition-all duration-200 group"
-                                href="#">
-                                <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform"
-                                        data-icon="dashboard">dashboard</span>
-                                <span class="font-medium">Dashboard</span>
-                        </a>
                         <!-- Active State for Staff Management -->
                         <a class="sidebar-item active flex items-center space-x-3 px-4 py-3 bg-primary-fixed/30 text-primary rounded-xl transition-all duration-200 group"
                                 href="#">
@@ -161,12 +165,6 @@
                 </nav>
                 <!-- Footer Links -->
                 <div class="mt-auto pt-6 border-t border-slate-100 space-y-2 -mx-2">
-                        <a class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-primary hover:bg-slate-50 rounded-xl transition-all duration-200 group"
-                                href="#">
-                                <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform"
-                                        data-icon="support_agent">support_agent</span>
-                                <span class="font-medium">Support</span>
-                        </a>
                         <a class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group"
                                 href="#">
                                 <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform"
@@ -189,8 +187,6 @@
                                                 placeholder="Search staff, departments..." type="text" />
                                 </div>
                         </div>
-                        <div class="flex items-center space-x-4">
-                        </div>
                 </header>
                 <!-- Page Content -->
                 <div class="flex-1 p-8 md:p-12 lg:px-16 lg:py-12 max-w-[1600px] mx-auto w-full">
@@ -201,14 +197,16 @@
                                         <h2 class="font-h1 text-4xl text-primary tracking-tight mb-2">Staff Management
                                         </h2>
                                         <p class="font-body-lg text-slate-500 max-w-xl">Welcome back. Here is the
-                                                current overview of your medical staff across all departments.</p>
+                                                current overview of your
+                                                medical staff across all departments.</p>
                                 </div>
                                 <div
                                         class="text-left md:text-right bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100 inline-flex flex-col justify-center">
                                         <p
                                                 class="font-label-caps text-[10px] text-slate-400 uppercase tracking-widest mb-1">
-                                                Today's Date</p>
-                                        <p id="current-date" class="font-h3 text-slate-800">October 24, 2023</p>
+                                                Today's Date
+                                        </p>
+                                        <p class="font-h3 text-slate-800" id="live-date"></p>
                                 </div>
                         </div>
                         <!-- Top Content Row -->
@@ -236,7 +234,8 @@
                                         <div class="relative z-10">
                                                 <p
                                                         class="font-label-caps text-slate-500 uppercase tracking-widest mb-2 font-semibold">
-                                                        Total Doctors</p>
+                                                        Total
+                                                        Doctors</p>
                                                 <div class="flex items-end space-x-4">
                                                         <span
                                                                 class="font-h1 text-5xl text-primary font-extrabold tracking-tight">248</span>
@@ -262,11 +261,14 @@
                                         </div>
                                         <div class="relative z-10 mb-8 lg:mb-0 max-w-md">
                                                 <h3 class="font-h2 text-3xl text-white mb-3 font-bold tracking-tight">
-                                                        Streamline Staff Operations</h3>
+                                                        Streamline Staff
+                                                        Operations</h3>
                                                 <p
                                                         class="font-body-md text-primary-fixed text-base leading-relaxed opacity-90">
-                                                        Quickly onboard new medical professionals or adjust departmental
-                                                        structures to maintain optimal patient care.</p>
+                                                        Quickly onboard
+                                                        new medical professionals or adjust departmental structures to
+                                                        maintain optimal patient
+                                                        care.</p>
                                         </div>
                                         <div class="relative z-10 flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
                                                 <button
@@ -335,110 +337,13 @@
                                                                         Actions</th>
                                                         </tr>
                                                 </thead>
-                                                <tbody class="divide-y divide-slate-100">
-                                                        <tr class="hover:bg-slate-50/50 transition-colors group">
-                                                                <td class="px-8 py-4">
-                                                                        <div class="flex items-center space-x-3">
-                                                                                <div
-                                                                                        class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
-                                                                                        JD</div>
-                                                                                <div>
-                                                                                        <p
-                                                                                                class="font-bold text-slate-800 text-sm">
-                                                                                                Dr. Jane Doe</p>
-                                                                                        <p
-                                                                                                class="text-xs text-slate-500">
-                                                                                                ID: #DR-8291</p>
-                                                                                </div>
-                                                                        </div>
-                                                                </td>
-                                                                <td class="px-6 py-4 text-sm text-slate-600">
-                                                                        Cardiologist</td>
-                                                                <td class="px-6 py-4 text-sm text-slate-600">Cardiology
-                                                                </td>
-                                                                <td class="px-6 py-4">
-                                                                        <span
-                                                                                class="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-100">Active</span>
-                                                                </td>
-                                                                <td class="px-8 py-4 text-right">
-                                                                        <button class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                                                                title="Delete Doctor">
-                                                                                <span
-                                                                                        class="material-symbols-outlined text-[20px]">delete</span>
-                                                                        </button>
-                                                                </td>
-                                                        </tr>
-                                                        <tr class="hover:bg-slate-50/50 transition-colors group">
-                                                                <td class="px-8 py-4">
-                                                                        <div class="flex items-center space-x-3">
-                                                                                <div
-                                                                                        class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-sm">
-                                                                                        MS</div>
-                                                                                <div>
-                                                                                        <p
-                                                                                                class="font-bold text-slate-800 text-sm">
-                                                                                                Dr. Michael Smith</p>
-                                                                                        <p
-                                                                                                class="text-xs text-slate-500">
-                                                                                                ID: #DR-9012</p>
-                                                                                </div>
-                                                                        </div>
-                                                                </td>
-                                                                <td class="px-6 py-4 text-sm text-slate-600">
-                                                                        Pediatrician</td>
-                                                                <td class="px-6 py-4 text-sm text-slate-600">Pediatrics
-                                                                </td>
-                                                                <td class="px-6 py-4">
-                                                                        <span
-                                                                                class="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-100">Active</span>
-                                                                </td>
-                                                                <td class="px-8 py-4 text-right">
-                                                                        <button class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                                                                title="Delete Doctor">
-                                                                                <span
-                                                                                        class="material-symbols-outlined text-[20px]">delete</span>
-                                                                        </button>
-                                                                </td>
-                                                        </tr>
-                                                        <tr class="hover:bg-slate-50/50 transition-colors group">
-                                                                <td class="px-8 py-4">
-                                                                        <div class="flex items-center space-x-3">
-                                                                                <div
-                                                                                        class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-sm">
-                                                                                        SW</div>
-                                                                                <div>
-                                                                                        <p
-                                                                                                class="font-bold text-slate-800 text-sm">
-                                                                                                Dr. Sarah Williams</p>
-                                                                                        <p
-                                                                                                class="text-xs text-slate-500">
-                                                                                                ID: #DR-7421</p>
-                                                                                </div>
-                                                                        </div>
-                                                                </td>
-                                                                <td class="px-6 py-4 text-sm text-slate-600">Neurologist
-                                                                </td>
-                                                                <td class="px-6 py-4 text-sm text-slate-600">Neurology
-                                                                </td>
-                                                                <td class="px-6 py-4">
-                                                                        <span
-                                                                                class="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold border border-slate-200">On
-                                                                                Leave</span>
-                                                                </td>
-                                                                <td class="px-8 py-4 text-right">
-                                                                        <button class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                                                                                title="Delete Doctor">
-                                                                                <span
-                                                                                        class="material-symbols-outlined text-[20px]">delete</span>
-                                                                        </button>
-                                                                </td>
-                                                        </tr>
+                                                <tbody id="doctor-list" class="divide-y divide-slate-100">
                                                 </tbody>
                                         </table>
                                 </div>
                                 <div
                                         class="px-8 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                                        <span>Showing 3 of 248 medical professionals</span>
+                                        <span id="showing-text">Showing 0 medical professionals</span>
                                         <div class="flex space-x-2">
                                                 <button class="px-3 py-1 border border-slate-200 rounded-md bg-white disabled:opacity-50"
                                                         disabled="">Previous</button>
@@ -450,14 +355,13 @@
                 </div>
         </main>
         <script>
-                function updateLiveDate() {
-                        const dateElement = document.getElementById('current-date');
-                        const now = new Date();
-                        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                        dateElement.textContent = now.toLocaleDateString('en-US', options);
-                }
-                updateLiveDate();
+                document.getElementById('live-date').textContent = new Date().toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                });
         </script>
+        <script type="module" src="./scripts/hosp_admin.js"></script>
 </body>
 
 </html>
