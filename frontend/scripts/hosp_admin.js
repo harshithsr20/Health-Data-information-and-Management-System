@@ -1,5 +1,6 @@
-import { db } from "../../firebaseConfig.js";
+import { db, auth } from "../../firebaseConfig.js";
 import { collection, query, where, getDocs, onSnapshot, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const adminUID = sessionStorage.getItem("adminUID");
 
@@ -110,5 +111,21 @@ function listenToDoctors(hospitalUID) {
         }
     }, (error) => {
         console.error("Error listening to doctors:", error);
+    });
+}
+
+// Logout Functionality
+const logoutBtn = document.getElementById("logout-btn");
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        try {
+            await signOut(auth);
+            sessionStorage.removeItem("adminUID");
+            window.location.href = "../index.html";
+        } catch (error) {
+            console.error("Error signing out:", error);
+            alert("Failed to log out. Please try again.");
+        }
     });
 }
