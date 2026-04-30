@@ -13,6 +13,8 @@ const successOverlay  = document.getElementById("success-overlay");
 const successMsgEl    = document.getElementById("success-msg");
 const lastUidEl       = document.getElementById("last-assigned-uid");
 const lastNameEl      = document.getElementById("last-assigned-name");
+const lastRemovedUidEl  = document.getElementById("last-removed-uid");
+const lastRemovedNameEl = document.getElementById("last-removed-name");
 
 // UID pattern: 000-0000-00000  (3 digits - 4 digits - 5 digits)
 const UID_REGEX = /^\d{3}-\d{4}-\d{5}$/;
@@ -54,7 +56,24 @@ async function fetchLastAssignedDoctor() {
     }
 }
 
+// Fetch the last deleted doctor for this hospital from localStorage
+function displayLastRemovedDoctor() {
+    if (!adminUID) return;
+    
+    const deletedUID = localStorage.getItem(`lastDeletedDoctorUID_${adminUID}`);
+    const deletedName = localStorage.getItem(`lastDeletedDoctorName_${adminUID}`);
+    
+    if (deletedUID && deletedName) {
+        lastRemovedUidEl.textContent = deletedUID;
+        lastRemovedNameEl.textContent = deletedName;
+    } else {
+        lastRemovedUidEl.textContent = "—";
+        lastRemovedNameEl.textContent = "No recent deletions";
+    }
+}
+
 fetchLastAssignedDoctor();
+displayLastRemovedDoctor();
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function showError(message) {

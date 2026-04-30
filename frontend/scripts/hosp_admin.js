@@ -1,5 +1,5 @@
 import { db } from "../../firebaseConfig.js";
-import { collection, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, query, where, getDocs, onSnapshot, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const adminUID = sessionStorage.getItem("adminUID");
 
@@ -45,10 +45,10 @@ function listenToDoctors(hospitalUID) {
         tbody.innerHTML = ""; // Clear existing rows
         let count = 0;
 
-        snapshot.forEach((doc) => {
-            const data = doc.data();
+        snapshot.forEach((doctorDoc) => {
+            const data = doctorDoc.data();
             const doctorName = data.Name || "Unknown Doctor";
-            const doctorUID = data.UID || doc.id;
+            const doctorUID = data.UID || doctorDoc.id;
 
             const tr = document.createElement("tr");
             tr.className = "hover:bg-slate-50 transition-colors group";
@@ -67,11 +67,34 @@ function listenToDoctors(hospitalUID) {
                     </span>
                 </td>
                 <td class="px-8 py-4 border-b border-slate-100 text-right">
-                    <button class="text-slate-400 hover:text-primary transition-colors p-2 rounded-lg hover:bg-slate-100">
-                        <span class="material-symbols-outlined text-[18px]">more_vert</span>
+                    <button class="delete-btn text-slate-400 hover:text-red-600 transition-colors p-2 rounded-lg hover:bg-red-50" data-uid="${doctorUID}">
+                        <span class="material-symbols-outlined text-[20px]">delete</span>
                     </button>
                 </td>
             `;
+
+            // Add delete functionality
+            const deleteBtn = tr.querySelector(".delete-btn");
+            deleteBtn.addEventListener("click", async (e) => {
+                const uidToDelete = e.currentTarget.getAttribute("data-uid");
+                if (confirm(`Are you sure you want to remove Dr. ${doctorName}?`)) {
+                    // 1. Remove from the list visually immediately
+                    tr.remove();
+                    
+                    // 2. Remove from Firebase
+                    try {
+                        await deleteDoc(doc(db, "Doctors", uidToDelete));
+                        console.log(`Doctor document ${uidToDelete} deleted successfully`);
+                        // 3. Save to localStorage for doc_reg.html to display
+                        localStorage.setItem(`lastDeletedDoctorUID_${adminUID}`, uidToDelete);
+                        localStorage.setItem(`lastDeletedDoctorName_${adminUID}`, doctorName);
+                    } catch (error) {
+                        console.error("Error deleting doctor document:", error);
+                        alert("Error: Could not remove doctor profile.");
+                    }
+                }
+            });
+
             tbody.appendChild(tr);
             count++;
         });
