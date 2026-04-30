@@ -1,6 +1,6 @@
 import { auth, db } from "../../firebaseConfig.js";
 import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { doc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ── Element refs ──────────────────────────────────────────────────────────────
 const registerBtn     = document.getElementById("register-btn");
@@ -16,6 +16,45 @@ const lastNameEl      = document.getElementById("last-assigned-name");
 
 // UID pattern: 000-0000-00000  (3 digits - 4 digits - 5 digits)
 const UID_REGEX = /^\d{3}-\d{4}-\d{5}$/;
+
+const adminUID = sessionStorage.getItem("adminUID");
+
+// On load, fetch the last assigned doctor for this hospital
+async function fetchLastAssignedDoctor() {
+    if (!adminUID) return;
+    
+    try {
+        const q = query(
+            collection(db, "Doctors"),
+            where("UID", ">=", adminUID),
+            where("UID", "<=", adminUID + "\uf8ff")
+        );
+        
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+            const docsList = querySnapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    Name: data.Name || "Unknown Doctor",
+                    UID: data.UID || doc.id
+                };
+            });
+            
+            docsList.sort((a, b) => String(b.UID).localeCompare(String(a.UID)));
+            
+            const lastDoc = docsList[0];
+            lastUidEl.textContent = lastDoc.UID || "—";
+            lastNameEl.textContent = lastDoc.Name || "Unknown Doctor";
+        } else {
+            lastUidEl.textContent = "—";
+            lastNameEl.textContent = "No doctors yet";
+        }
+    } catch (error) {
+        console.error("Error fetching last assigned doctor:", error);
+    }
+}
+
+fetchLastAssignedDoctor();
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function showError(message) {
