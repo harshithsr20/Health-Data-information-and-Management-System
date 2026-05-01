@@ -116,7 +116,8 @@ async function changePassword() {
         showSuccess("Password updated successfully! Redirecting to login…");
 
         setTimeout(() => {
-            window.location.href = "admin_log.html";
+            const isDoctor = DOCTOR_PATTERN.test(idValue);
+            window.location.href = isDoctor ? "doc_login.html" : "admin_log.html";
         }, 2000);
 
     } catch (error) {

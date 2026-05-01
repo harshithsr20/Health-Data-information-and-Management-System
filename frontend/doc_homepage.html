@@ -47,11 +47,15 @@
             </a>
         </div>
         <div class="sidebar-footer">
+            <a class="nav-link" href="change_password.html">
+                <span class="material-symbols-outlined">lock_reset</span>
+                <span>Change Password</span>
+            </a>
             <a class="nav-link" href="#">
                 <span class="material-symbols-outlined">help</span>
                 <span>Support</span>
             </a>
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="#" id="logout-link">
                 <span class="material-symbols-outlined">logout</span>
                 <span>Sign Out</span>
             </a>
@@ -75,6 +79,10 @@
                     <span class="material-symbols-outlined">search</span>
                     <input class="search-input" placeholder="Search patients..." type="text" />
                 </div>
+                <!-- Change Password -->
+                <a href="change_password.html" class="icon-btn" title="Change Password">
+                    <span class="material-symbols-outlined">lock_reset</span>
+                </a>
             </div>
         </header>
 
@@ -83,8 +91,8 @@
             <div class="content-container">
                 <!-- Page Header -->
                 <div class="page-header">
-                    <h2 class="page-header-greeting">Good morning, <span>Dr. Reynolds</span></h2>
-                    <p class="page-header-sub">Here is your clinical overview for today, October 24th.</p>
+                    <h2 class="page-header-greeting">Good morning, <span id="doc-name-display">Dr. Reynolds</span></h2>
+                    <p class="page-header-sub">Here is your clinical overview for today, <span id="current-date-display">October 24th</span>.</p>
                 </div>
 
                 <!-- Action Cards -->
@@ -169,6 +177,7 @@
             </footer>
         </main>
     </div>
+    <script type="module" src="./scripts/doc_homepage.js"></script>
 </body>
 
 </html>
