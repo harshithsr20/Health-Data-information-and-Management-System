@@ -123,8 +123,8 @@ function hideUpdateMessages() {
 function setUpdateLoading(loading) {
     updateBtn.disabled = loading;
     updateBtn.innerHTML = loading
-        ? `<span class="material-symbols-outlined text-sm">progress_activity</span> Updating…`
-        : `<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span> Update Name`;
+        ? `<span class="material-symbols-outlined text-sm animate-spin" data-icon="progress_activity">progress_activity</span> Creating…`
+        : `<span class="material-symbols-outlined text-sm" data-icon="note_add">note_add</span> Create Document`;
 }
 
 // ── Update Name handler ───────────────────────────────────────────────────────
@@ -153,30 +153,23 @@ updateBtn.addEventListener("click", async () => {
     setUpdateLoading(true);
 
     try {
-        // Step 1: Check if the UID document exists in the Doctors collection
+        // Create a new document with the inputted UID as the document ID
         const docRef = doc(db, "Doctors", uid);
-        const q = query(collection(db, "Doctors"), where("UID", "==", uid));
-        const querySnap = await getDocs(q);
+        
+        await setDoc(docRef, { 
+            Name: newName, 
+            UID: uid 
+        });
 
-        if (querySnap.empty) {
-            showUpdateError(`No doctor found with UID "${uid}". Please check and try again.`);
-            setUpdateLoading(false);
-            return;
-        }
-
-        // Step 2: Update the Name field on the matched document
-        // Document ID is the UID itself (matches your Firestore structure)
-        await updateDoc(docRef, { Name: newName });
-
-        showUpdateSuccess(`Name updated to "${newName}" for UID ${uid}.`);
+        showUpdateSuccess(`Document created for "${newName}" with UID ${uid}.`);
 
         // Clear inputs after success
         updateUidInput.value = "";
         updateNameInput.value = "";
 
     } catch (error) {
-        console.error("Name update failed:", error);
-        showUpdateError("Update failed. Please try again.");
+        console.error("Document creation failed:", error);
+        showUpdateError("Creation failed. Please try again.");
     } finally {
         setUpdateLoading(false);
     }
