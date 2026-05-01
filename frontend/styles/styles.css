@@ -473,10 +473,7 @@ body {
   color: #fff;
   border-color: transparent;
   transform: scale(1.06);
-<<<<<<< HEAD
   box-shadow: 0 6px 20px rgba(192, 21, 42, 0.35);
-=======
-  box-shadow: 0 6px 20px rgba(192,21,42,0.35);
 }
 
 /* ══════════════════════════════════
@@ -485,7 +482,9 @@ body {
 
 /* Allow scrolling when cards are shown */
 @media (max-width: 768px) {
-  html, body {
+
+  html,
+  body {
     overflow: auto;
     height: auto;
     min-height: 100vh;
@@ -512,7 +511,7 @@ body {
     letter-spacing: 1px;
   }
 
-  .main.part > p {
+  .main.part>p {
     font-size: 0.88rem;
   }
 
@@ -531,27 +530,40 @@ body {
     padding: 0 4px;
   }
 
-  .card1, .card2, .card3, .card4 {
+  .card1,
+  .card2,
+  .card3,
+  .card4 {
     width: calc(50% - 10px);
     min-width: 150px;
     padding: 28px 18px 24px;
   }
 
-  .card1 h2, .card2 h2, .card3 h2, .card4 h2 {
+  .card1 h2,
+  .card2 h2,
+  .card3 h2,
+  .card4 h2 {
     font-size: 1.05rem;
   }
 
-  .card1 p, .card2 p, .card3 p, .card4 p {
+  .card1 p,
+  .card2 p,
+  .card3 p,
+  .card4 p {
     font-size: 0.75rem;
   }
 
-  .card1 button, .card2 button, .card3 button, .card4 button {
+  .card1 button,
+  .card2 button,
+  .card3 button,
+  .card4 button {
     padding: 8px 20px;
     font-size: 0.78rem;
   }
 
   /* Reduce bloodstream particles on mobile for performance */
-  .rbc, .wbc {
+  .rbc,
+  .wbc {
     transform: scale(0.7);
   }
 
@@ -568,7 +580,11 @@ body {
 
 /* Extra-small screens (< 400px): single column cards */
 @media (max-width: 400px) {
-  .card1, .card2, .card3, .card4 {
+
+  .card1,
+  .card2,
+  .card3,
+  .card4 {
     width: 100%;
     max-width: 260px;
   }
@@ -576,5 +592,4 @@ body {
   .main.part h1 {
     font-size: clamp(2.2rem, 14vw, 3rem);
   }
->>>>>>> docRegistryPage
 }
