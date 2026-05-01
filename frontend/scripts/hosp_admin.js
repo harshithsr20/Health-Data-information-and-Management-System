@@ -121,11 +121,11 @@ if (logoutBtn) {
         e.preventDefault();
         try {
             await signOut(auth);
+        } catch (error) {
+            console.error("Error signing out from Firebase:", error);
+        } finally {
             sessionStorage.removeItem("adminUID");
             window.location.href = "../index.html";
-        } catch (error) {
-            console.error("Error signing out:", error);
-            alert("Failed to log out. Please try again.");
         }
     });
 }
