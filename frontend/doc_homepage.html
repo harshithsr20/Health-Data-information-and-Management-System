@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HDIMS - Clinician Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <!-- External Stylesheet -->
+    <link rel="stylesheet" href="./styles/doc_homepage.css">
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-icon">
+                <span class="material-symbols-outlined"
+                    style="font-variation-settings: 'FILL' 1;">medical_services</span>
+            </div>
+            <div>
+                <h1 class="sidebar-brand-title">Medical Portal</h1>
+                <p class="sidebar-brand-subtitle">Clinician Workspace</p>
+            </div>
+        </div>
+        <div class="sidebar-nav">
+            <a class="nav-link active" href="#">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                <span>Dashboard</span>
+            </a>
+            <a class="nav-link" href="#">
+                <span class="material-symbols-outlined">person_add</span>
+                <span>Patient Registration</span>
+            </a>
+            <a class="nav-link" href="#">
+                <span class="material-symbols-outlined">edit_document</span>
+                <span>Update Patient Info</span>
+            </a>
+            <a class="nav-link" href="#">
+                <span class="material-symbols-outlined">folder_shared</span>
+                <span>Patient Records</span>
+            </a>
+        </div>
+        <div class="sidebar-footer">
+            <a class="nav-link" href="change_password.html">
+                <span class="material-symbols-outlined">lock_reset</span>
+                <span>Change Password</span>
+            </a>
+            <a class="nav-link" href="#">
+                <span class="material-symbols-outlined">help</span>
+                <span>Support</span>
+            </a>
+            <a class="nav-link" href="#" id="logout-link">
+                <span class="material-symbols-outlined">logout</span>
+                <span>Sign Out</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-wrapper">
+        <!-- Top Header -->
+        <header class="topbar">
+            <div class="hidden-mobile">
+                <span class="text-headline">Overview</span>
+            </div>
+            <div class="hidden-desktop">
+                <span class="topbar-mobile-brand">HDIMS</span>
+            </div>
+
+            <div class="topbar-actions">
+                <!-- Search -->
+                <div class="search-wrap hidden-mobile">
+                    <span class="material-symbols-outlined">search</span>
+                    <input class="search-input" placeholder="Search patients..." type="text" />
+                </div>
+                <!-- Change Password -->
+                <a href="change_password.html" class="icon-btn" title="Change Password">
+                    <span class="material-symbols-outlined">lock_reset</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Scrollable Canvas -->
+        <main class="main-canvas">
+            <div class="content-container">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h2 class="page-header-greeting">Good morning, <span id="doc-name-display">Dr. Reynolds</span></h2>
+                    <p class="page-header-sub">Here is your clinical overview for today, <span id="current-date-display">October 24th</span>.</p>
+                </div>
+
+                <!-- Action Cards -->
+                <section class="action-cards-grid">
+                    <div class="card action-card">
+                        <div>
+                            <div class="action-card-icon-wrap primary">
+                                <span class="material-symbols-outlined">person_add</span>
+                            </div>
+                            <h3 class="action-card-title">Register New Patient</h3>
+                            <p class="action-card-desc">Intake processing for new admissions and walk-ins.</p>
+                        </div>
+                        <button class="btn btn-primary btn-full">
+                            Start Registration
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+
+                    <div class="card action-card">
+                        <div>
+                            <div class="action-card-icon-wrap secondary">
+                                <span class="material-symbols-outlined">edit_document</span>
+                            </div>
+                            <h3 class="action-card-title">Update Patient Info</h3>
+                            <p class="action-card-desc">Modify vitals, demographics, and active prescriptions.</p>
+                        </div>
+                        <button class="btn btn-outline btn-full">
+                            Update Records
+                        </button>
+                    </div>
+
+                    <div class="card action-card">
+                        <div>
+                            <div class="action-card-icon-wrap neutral">
+                                <span class="material-symbols-outlined">folder_shared</span>
+                            </div>
+                            <h3 class="action-card-title">View Patient Database</h3>
+                            <p class="action-card-desc">Access full medical histories and diagnostic reports.</p>
+                        </div>
+                        <button class="btn btn-outline btn-full">
+                            Open Database
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Data Section -->
+                <section class="data-section">
+                    <!-- Left: Starred Patients -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Starred Patients</h3>
+                            <button class="btn btn-ghost text-label">Manage List</button>
+                        </div>
+                        <div class="panel-body" id="starred-patients-list">
+                            <!-- Empty container waiting for dynamic content -->
+                        </div>
+                    </div>
+
+                    <!-- Right: Recent Activity -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3 class="panel-title">Recent Activity</h3>
+                        </div>
+                        <div class="panel-body activity-feed" id="recent-activity-list">
+                            <!-- Empty container waiting for dynamic content -->
+                        </div>
+                        <div class="panel-footer">
+                            <button class="btn btn-ghost text-label">View All Activity</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Footer -->
+            <footer class="main-footer">
+                <p class="footer-text">© 2024 HDIMS Global Healthcare. Optimized for Clinical Performance.</p>
+                <div class="footer-links">
+                    <a class="footer-link" href="#">System Status</a>
+                    <a class="footer-link" href="#">HIPAA Compliance</a>
+                    <a class="footer-link" href="#">Privacy Policy</a>
+                </div>
+            </footer>
+        </main>
+    </div>
+    <script type="module" src="./scripts/doc_homepage.js"></script>
+</body>
+
+</html>

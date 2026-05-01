@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/harshithsr20/Health-Data-information-and-Management-System/issues"
   },
-  "homepage": "https://github.com/harshithsr20/Health-Data-information-and-Management-System#readme"
+  "homepage": "https://github.com/harshithsr20/Health-Data-information-and-Management-System#readme",
+  "dependencies": {
+    "firebase": "^12.11.0"
+  }
 }
