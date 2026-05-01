@@ -233,6 +233,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  padding: 0 20px;
 }
 
 /* NEW */
@@ -332,7 +333,7 @@ body {
 .main-container {
   display: flex;
   gap: 24px;
-  flex-wrap: nonwrap;
+  flex-wrap: wrap;
   justify-content: center;
   animation: cardsReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -472,5 +473,108 @@ body {
   color: #fff;
   border-color: transparent;
   transform: scale(1.06);
+<<<<<<< HEAD
   box-shadow: 0 6px 20px rgba(192, 21, 42, 0.35);
+=======
+  box-shadow: 0 6px 20px rgba(192,21,42,0.35);
+}
+
+/* ══════════════════════════════════
+   MOBILE RESPONSIVE — Landing Page
+══════════════════════════════════ */
+
+/* Allow scrolling when cards are shown */
+@media (max-width: 768px) {
+  html, body {
+    overflow: auto;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  body {
+    padding: 40px 16px;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .main.part {
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .main.part h1 {
+    font-size: clamp(2.8rem, 12vw, 4rem);
+  }
+
+  .main.part h3 {
+    font-size: clamp(0.7rem, 3vw, 0.95rem);
+    letter-spacing: 1px;
+  }
+
+  .main.part > p {
+    font-size: 0.88rem;
+  }
+
+  .heart-beat {
+    margin-top: 18px;
+  }
+
+  #get-started img {
+    width: 70px;
+    height: 70px;
+  }
+
+  /* Cards stack in 2-column grid or single column */
+  .main-container {
+    gap: 16px;
+    padding: 0 4px;
+  }
+
+  .card1, .card2, .card3, .card4 {
+    width: calc(50% - 10px);
+    min-width: 150px;
+    padding: 28px 18px 24px;
+  }
+
+  .card1 h2, .card2 h2, .card3 h2, .card4 h2 {
+    font-size: 1.05rem;
+  }
+
+  .card1 p, .card2 p, .card3 p, .card4 p {
+    font-size: 0.75rem;
+  }
+
+  .card1 button, .card2 button, .card3 button, .card4 button {
+    padding: 8px 20px;
+    font-size: 0.78rem;
+  }
+
+  /* Reduce bloodstream particles on mobile for performance */
+  .rbc, .wbc {
+    transform: scale(0.7);
+  }
+
+  .rbc {
+    width: 12px;
+    height: 8px;
+  }
+
+  .wbc {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Extra-small screens (< 400px): single column cards */
+@media (max-width: 400px) {
+  .card1, .card2, .card3, .card4 {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .main.part h1 {
+    font-size: clamp(2.2rem, 14vw, 3rem);
+  }
+>>>>>>> docRegistryPage
 }

@@ -132,13 +132,156 @@
                         /* primary-container */
                         border-radius: 0 4px 4px 0;
                 }
+
+                /* ── Mobile Sidebar Toggle ── */
+                #sidebar-overlay {
+                        display: none;
+                        position: fixed;
+                        inset: 0;
+                        background: rgba(0, 0, 0, 0.4);
+                        backdrop-filter: blur(4px);
+                        -webkit-backdrop-filter: blur(4px);
+                        z-index: 45;
+                        transition: opacity 0.3s ease;
+                }
+
+                #sidebar-overlay.active {
+                        display: block;
+                }
+
+                #hamburger-btn {
+                        display: none;
+                }
+
+                @media (max-width: 767px) {
+                        #hamburger-btn {
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                width: 40px;
+                                height: 40px;
+                                border: none;
+                                background: transparent;
+                                cursor: pointer;
+                                border-radius: 12px;
+                                color: #43474f;
+                                transition: background 0.2s;
+                                flex-shrink: 0;
+                        }
+
+                        #hamburger-btn:hover {
+                                background: #f0f4f8;
+                        }
+
+                        /* Sidebar hidden off-screen by default on mobile */
+                        aside#sidebar {
+                                transform: translateX(-100%);
+                                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        }
+
+                        aside#sidebar.open {
+                                transform: translateX(0);
+                        }
+
+                        /* Main content takes full width on mobile */
+                        main#main-content {
+                                margin-left: 0 !important;
+                        }
+
+                        /* Reduce page padding on mobile */
+                        .page-content-area {
+                                padding: 20px 16px !important;
+                        }
+
+                        /* Stack header content */
+                        .header-bar {
+                                padding-left: 12px !important;
+                                padding-right: 12px !important;
+                                height: auto !important;
+                                min-height: 60px;
+                                padding-top: 8px;
+                                padding-bottom: 8px;
+                        }
+
+                        /* Page header stacks vertically */
+                        .page-header {
+                                flex-direction: column !important;
+                                align-items: flex-start !important;
+                                gap: 12px;
+                        }
+
+                        /* Staff title smaller on mobile */
+                        .page-header h2 {
+                                font-size: 1.75rem !important;
+                        }
+
+                        /* Date card full width */
+                        .date-card {
+                                text-align: left !important;
+                                width: 100%;
+                        }
+
+                        /* Stats card and action panel stack */
+                        .top-content-row {
+                                flex-direction: column !important;
+                        }
+
+                        .top-content-row>div {
+                                width: 100% !important;
+                        }
+
+                        /* Action buttons stack on mobile */
+                        .action-buttons {
+                                flex-direction: column !important;
+                                width: 100%;
+                        }
+
+                        .action-buttons button {
+                                width: 100%;
+                        }
+
+                        /* Table horizontal scroll */
+                        .table-wrapper {
+                                overflow-x: auto;
+                                -webkit-overflow-scrolling: touch;
+                        }
+
+                        /* Table footer stacks */
+                        .table-footer {
+                                flex-direction: column !important;
+                                gap: 8px;
+                                text-align: center;
+                        }
+
+                        /* Staff directory header stacks */
+                        .directory-header {
+                                flex-direction: column !important;
+                                gap: 8px;
+                        }
+                }
+
+                @media (max-width: 480px) {
+                        .page-header h2 {
+                                font-size: 1.4rem !important;
+                        }
+
+                        .stats-number {
+                                font-size: 2.5rem !important;
+                        }
+
+                        .action-panel-title {
+                                font-size: 1.4rem !important;
+                        }
+                }
         </style>
 </head>
 
 <body
         class="bg-[#f0f4f8] text-on-background font-body-md min-h-screen flex selection:bg-primary-fixed selection:text-on-primary-fixed">
+        <!-- Sidebar Overlay (mobile) -->
+        <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
         <!-- SideNavBar Component -->
-        <aside
+        <aside id="sidebar"
                 class="bg-white border-r border-slate-200 text-slate-700 font-manrope text-sm font-semibold fixed left-0 top-0 h-full w-[260px] flex flex-col p-6 transition-all duration-200 z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
                 <!-- Header -->
                 <div class="mb-12 flex items-center space-x-3">
@@ -165,7 +308,8 @@
                 </nav>
                 <!-- Footer Links -->
                 <div class="mt-auto pt-6 border-t border-slate-100 space-y-2 -mx-2">
-                        <a class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group"
+                        <a id="logout-btn"
+                                class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group"
                                 href="#">
                                 <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform"
                                         data-icon="logout">logout</span>
@@ -174,11 +318,15 @@
                 </div>
         </aside>
         <!-- Main Content Area -->
-        <main class="flex-1 ml-[260px] min-h-screen flex flex-col">
+        <main id="main-content" class="flex-1 ml-[260px] min-h-screen flex flex-col">
                 <!-- TopAppBar Component -->
                 <header
-                        class="bg-white/80 backdrop-blur-md font-manrope text-sm font-medium border-b border-slate-200 flex justify-between items-center w-full px-8 h-[72px] z-40 sticky top-0">
+                        class="header-bar bg-white/80 backdrop-blur-md font-manrope text-sm font-medium border-b border-slate-200 flex justify-between items-center w-full px-8 h-[72px] z-40 sticky top-0">
                         <div class="flex items-center space-x-4 flex-1">
+                                <!-- Hamburger Button (mobile) -->
+                                <button id="hamburger-btn" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                                        <span class="material-symbols-outlined text-[26px]">menu</span>
+                                </button>
                                 <!-- Search Bar -->
                                 <div class="relative w-full max-w-md hidden md:block group">
                                         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors"
@@ -189,10 +337,10 @@
                         </div>
                 </header>
                 <!-- Page Content -->
-                <div class="flex-1 p-8 md:p-12 lg:px-16 lg:py-12 max-w-[1600px] mx-auto w-full">
+                <div class="page-content-area flex-1 p-8 md:p-12 lg:px-16 lg:py-12 max-w-[1600px] mx-auto w-full">
                         <!-- Page Header -->
                         <div
-                                class="flex flex-col md:flex-row md:justify-between md:items-end mb-12 space-y-4 md:space-y-0">
+                                class="page-header flex flex-col md:flex-row md:justify-between md:items-end mb-12 space-y-4 md:space-y-0">
                                 <div>
                                         <h2 class="font-h1 text-4xl text-primary tracking-tight mb-2">Staff Management
                                         </h2>
@@ -201,7 +349,7 @@
                                                 medical staff across all departments.</p>
                                 </div>
                                 <div
-                                        class="text-left md:text-right bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100 inline-flex flex-col justify-center">
+                                        class="date-card text-left md:text-right bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100 inline-flex flex-col justify-center">
                                         <p
                                                 class="font-label-caps text-[10px] text-slate-400 uppercase tracking-widest mb-1">
                                                 Today's Date
@@ -210,7 +358,7 @@
                                 </div>
                         </div>
                         <!-- Top Content Row -->
-                        <div class="flex flex-col xl:flex-row gap-6 mb-8">
+                        <div class="top-content-row flex flex-col xl:flex-row gap-6 mb-8">
                                 <!-- Key Stats: Total Doctors -->
                                 <div
                                         class="xl:w-1/3 bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
@@ -238,7 +386,7 @@
                                                         Doctors</p>
                                                 <div class="flex items-end space-x-4">
                                                         <span
-                                                                class="font-h1 text-5xl text-primary font-extrabold tracking-tight">248</span>
+                                                                class="stats-number font-h1 text-5xl text-primary font-extrabold tracking-tight">248</span>
                                                         <div
                                                                 class="flex items-center bg-blue-50 px-2.5 py-1 rounded-lg mb-1">
                                                                 <span class="material-symbols-outlined text-[16px] text-blue-600 mr-1"
@@ -260,7 +408,8 @@
                                                 class="absolute -bottom-24 -left-24 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none">
                                         </div>
                                         <div class="relative z-10 mb-8 lg:mb-0 max-w-md">
-                                                <h3 class="font-h2 text-3xl text-white mb-3 font-bold tracking-tight">
+                                                <h3
+                                                        class="action-panel-title font-h2 text-3xl text-white mb-3 font-bold tracking-tight">
                                                         Streamline Staff
                                                         Operations</h3>
                                                 <p
@@ -270,8 +419,9 @@
                                                         maintain optimal patient
                                                         care.</p>
                                         </div>
-                                        <div class="relative z-10 flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-                                                <button
+                                        <div
+                                                class="action-buttons relative z-10 flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+                                                <button onclick="window.location.href='doc_reg.html'"
                                                         class="flex items-center justify-center px-6 py-4 bg-white text-primary font-bold text-sm rounded-2xl hover:bg-slate-50 hover:shadow-lg hover:-translate-y-0.5 transition-all shadow-md group">
                                                         <span class="material-symbols-outlined mr-2 text-[22px] group-hover:scale-110 transition-transform"
                                                                 data-icon="person_add">person_add</span>
@@ -297,7 +447,7 @@
                         <!-- Additional placeholder for content to fill out the page structure visually -->
                         <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
                                 <div class="px-8 py-6 border-b border-slate-100 flex flex-col space-y-4">
-                                        <div class="flex items-center justify-between">
+                                        <div class="directory-header flex items-center justify-between">
                                                 <h3 class="font-h2 text-xl text-primary font-bold">Medical Staff
                                                         Directory</h3>
                                                 <div class="flex space-x-3">
@@ -316,7 +466,7 @@
                                                         placeholder="Search by doctor name or ID..." type="text" />
                                         </div>
                                 </div>
-                                <div class="overflow-x-auto">
+                                <div class="table-wrapper overflow-x-auto">
                                         <table class="w-full text-left border-collapse">
                                                 <thead>
                                                         <tr class="bg-slate-50/50">
@@ -342,7 +492,7 @@
                                         </table>
                                 </div>
                                 <div
-                                        class="px-8 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                                        class="table-footer px-8 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                                         <span id="showing-text">Showing 0 medical professionals</span>
                                         <div class="flex space-x-2">
                                                 <button class="px-3 py-1 border border-slate-200 rounded-md bg-white disabled:opacity-50"
@@ -359,6 +509,26 @@
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
+                });
+
+                // Mobile sidebar toggle
+                function toggleSidebar() {
+                        const sidebar = document.getElementById('sidebar');
+                        const overlay = document.getElementById('sidebar-overlay');
+                        sidebar.classList.toggle('open');
+                        overlay.classList.toggle('active');
+                        document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+                }
+
+                // Close sidebar on resize to desktop
+                window.addEventListener('resize', () => {
+                        if (window.innerWidth >= 768) {
+                                const sidebar = document.getElementById('sidebar');
+                                const overlay = document.getElementById('sidebar-overlay');
+                                sidebar.classList.remove('open');
+                                overlay.classList.remove('active');
+                                document.body.style.overflow = '';
+                        }
                 });
         </script>
         <script type="module" src="./scripts/hosp_admin.js"></script>
