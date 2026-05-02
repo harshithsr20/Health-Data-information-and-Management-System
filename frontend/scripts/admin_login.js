@@ -1,4 +1,4 @@
-import { auth } from "../firebaseConfig.js";
+import { auth } from "../../firebaseConfig.js";
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const button = document.getElementById("submit-but");
@@ -31,6 +31,7 @@ async function login_admin() {
     try {
         await signInWithEmailAndPassword(auth, email, password);
         console.log("Admin logged in successfully");
+        sessionStorage.setItem("adminUID", idValue);
         window.location.href = "hosp_admin.html";
     } catch (error) {
         console.error("Authentication failed:", error);
