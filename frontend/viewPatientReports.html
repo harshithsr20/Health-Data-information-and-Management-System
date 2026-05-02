@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ClinicalConnect - View Patient Reports</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* AI Report Markdown Styling */
+        .ai-report h1 { font-size: 22px; font-weight: 700; margin: 16px 0 8px; color: #191c1e; }
+        .ai-report h2 { font-size: 18px; font-weight: 600; margin: 14px 0 6px; color: #00478d; border-bottom: 1px solid #c2c6d4; padding-bottom: 4px; }
+        .ai-report h3 { font-size: 15px; font-weight: 600; margin: 10px 0 4px; color: #191c1e; }
+        .ai-report h4 { font-size: 14px; font-weight: 600; margin: 8px 0 2px; color: #424752; }
+        .ai-report p  { margin: 4px 0 8px; line-height: 1.6; }
+        .ai-report ul { list-style: disc; padding-left: 24px; margin: 4px 0 12px; }
+        .ai-report ol { list-style: decimal; padding-left: 24px; margin: 4px 0 12px; }
+        .ai-report li { margin-bottom: 4px; line-height: 1.5; }
+        .ai-report strong { font-weight: 600; }
+        .ai-report hr { border: none; border-top: 1px solid #c2c6d4; margin: 16px 0; }
+        .ai-report code { background: #eceef0; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 8px rgba(0, 71, 141, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(0, 71, 141, 0.4); }
+        }
+        .analyzing-glow {
+            animation: pulse-glow 1.5s ease-in-out infinite;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#005eb8",
+                        "secondary": "#505f76",
+                        "on-primary-fixed": "#001b3d",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#c8daff",
+                        "surface-tint": "#005db6",
+                        "tertiary-container": "#596067",
+                        "secondary-fixed": "#d3e4fe",
+                        "surface-container-highest": "#e0e3e5",
+                        "inverse-on-surface": "#eff1f3",
+                        "tertiary-fixed": "#dde3eb",
+                        "surface-variant": "#e0e3e5",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "on-tertiary-fixed": "#161c22",
+                        "surface-dim": "#d8dadc",
+                        "outline": "#727783",
+                        "outline-variant": "#c2c6d4",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#c1c7cf",
+                        "on-surface-variant": "#424752",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "on-background": "#191c1e",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed": "#0b1c30",
+                        "on-tertiary-fixed-variant": "#41474e",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-tertiary-container": "#d4dae2",
+                        "secondary-container": "#d0e1fb",
+                        "surface": "#f7f9fb",
+                        "on-secondary-container": "#54647a",
+                        "primary": "#00478d",
+                        "surface-container": "#eceef0",
+                        "inverse-surface": "#2d3133",
+                        "tertiary": "#42484f",
+                        "background": "#f7f9fb",
+                        "primary-fixed-dim": "#a9c7ff",
+                        "on-surface": "#191c1e",
+                        "primary-fixed": "#d6e3ff",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#a9c7ff",
+                        "on-primary-fixed-variant": "#00468c",
+                        "surface-container-high": "#e6e8ea"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "40px",
+                        "stack-sm": "12px",
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "gutter": "32px",
+                        "stack-lg": "48px",
+                        "sidebar-width": "280px",
+                        "stack-md": "24px"
+                    },
+                    "fontFamily": {
+                        "h1": ["Inter", "sans-serif"],
+                        "display": ["Inter", "sans-serif"],
+                        "label-caps": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "h2": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "label-sm": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "h1": ["24px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display": ["36px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "h2": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background text-on-background font-body-md text-body-md antialiased flex h-screen overflow-hidden">
+    <!-- SideNavBar -->
+    <nav
+        class="fixed left-0 top-0 w-[280px] h-full border-r border-outline-variant bg-surface-container-lowest flex flex-col py-8 z-20">
+        <div class="px-6 mb-8 flex items-center gap-3">
+            <div
+                class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+                <span class="material-symbols-outlined" data-weight="fill"
+                    style="font-variation-settings: 'FILL' 1;">local_hospital</span>
+            </div>
+            <div>
+                <div class="font-h2 text-h2 text-primary font-black">Medical Admin</div>
+                <div class="font-label-sm text-label-sm text-secondary">Clinical Precision v1.0</div>
+            </div>
+        </div>
+        <div class="px-6 mb-6">
+            <button
+                class="w-full bg-primary hover:bg-surface-tint text-on-primary font-label-sm text-label-sm py-3 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                <span class="material-symbols-outlined">add</span>
+                New Record
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto">
+            <ul class="flex flex-col gap-1">
+                <li>
+                    <a class="flex items-center gap-3 px-6 py-4 text-secondary hover:text-on-surface hover:bg-surface-container transition-all cursor-pointer duration-200 ease-in-out"
+                        href="doc_homepage.html">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span class="font-label-sm text-label-sm">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 px-6 py-4 text-primary bg-primary-fixed border-l-4 border-primary transition-all cursor-pointer duration-200 ease-in-out"
+                        href="#">
+                        <span class="material-symbols-outlined">clinical_notes</span>
+                        <span class="font-label-sm text-label-sm">Patient Records</span>
+                    </a>
+                </li>
+                <li>
+                </li>
+                <li>
+                </li>
+                <li>
+                </li>
+            </ul>
+        </div>
+        <div class="mt-auto border-t border-outline-variant pt-4">
+            <ul class="flex flex-col gap-1">
+                <li>
+                    <a class="flex items-center gap-3 px-6 py-4 text-secondary hover:text-on-surface hover:bg-surface-container transition-all cursor-pointer duration-200 ease-in-out"
+                        href="#">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span class="font-label-sm text-label-sm">Log Out</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Main Wrapper -->
+    <div class="flex-1 ml-[280px] flex flex-col min-w-0">
+        <!-- TopAppBar -->
+        <header
+            class="bg-surface-container-lowest w-full top-0 border-b border-outline-variant flex justify-between items-center h-16 px-10 shadow-[0_15px_15px_rgba(0,0,0,0.04)] z-10 sticky">
+        </header>
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-margin-page bg-background">
+            <div class="max-w-container-max mx-auto flex flex-col gap-gutter">
+                <!-- Page Header -->
+                <div>
+                    <h1 class="font-display text-display text-on-surface mb-2">View Patient Reports</h1>
+                    <p class="font-body-lg text-body-lg text-secondary">Enter Patient ID to view uploaded diagnostic reports</p>
+                </div>
+                <!-- Content Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter items-end">
+                    <!-- Patient ID Input -->
+                    <div class="mb-6 max-w-sm">
+                        <label class="block font-label-sm text-label-sm text-secondary mb-2 uppercase tracking-wider"
+                            for="patient-id">Patient ID</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">fingerprint</span>
+                            <input
+                                class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                                id="patient-id" placeholder="Enter Patient ID (e.g. #PT-88492)" type="text" />
+                        </div>
+                    </div>
+                    <!-- Fetch Button -->
+                    <div class="mb-6 flex items-end">
+                        <button id="fetch-btn" type="button"
+                            class="w-full lg:w-auto px-6 py-3 bg-primary hover:bg-surface-tint text-on-primary font-label-sm text-label-sm rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm">
+                            <span class="material-symbols-outlined">search</span>
+                            Fetch Reports
+                        </button>
+                    </div>
+                    <!-- Reports List -->
+                    <div class="lg:col-span-2">
+                        <div id="reports-container" class="hidden">
+                            <h2 class="font-h2 text-h2 text-on-surface mb-stack-sm pb-2 border-b border-outline-variant">Reports</h2>
+                            <div id="reports-list" class="space-y-4">
+                                <!-- Reports will be inserted here -->
+                            </div>
+                        </div>
+                        <!-- Status messages -->
+                        <div id="no-reports" class="hidden mt-4 flex items-center gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <span class="material-symbols-outlined text-yellow-600">info</span>
+                            <p class="font-body-md text-body-md text-yellow-700">No reports found for this patient.</p>
+                        </div>
+                        <div id="fetch-error" class="hidden mt-4 flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <span class="material-symbols-outlined text-red-600">error</span>
+                            <p id="error-text" class="font-body-md text-body-md text-red-700"></p>
+                        </div>
+                        <div id="loading" class="hidden mt-4 flex items-center gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <span class="material-symbols-outlined text-blue-600 animate-spin">progress_activity</span>
+                            <p class="font-body-md text-body-md text-blue-700">Fetching reports...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════ AI Patient History Analysis ═══════════ -->
+                <div class="mt-gutter">
+                    <div
+                        class="bg-surface-container-lowest rounded-xl shadow-[0_15px_15px_rgba(0,0,0,0.04)] border border-outline-variant p-stack-md flex flex-col">
+                        <h2 class="font-h2 text-h2 text-on-surface mb-stack-sm pb-2 border-b border-outline-variant flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">neurology</span>
+                            AI Patient History Analysis
+                            <span
+                                class="ml-auto px-3 py-1 text-[10px] font-semibold uppercase tracking-widest rounded-full bg-primary-fixed text-primary">Powered
+                                by Groq</span>
+                        </h2>
+                        <p class="font-body-md text-body-md text-secondary mt-1 mb-4">Enter a Patient UID to fetch
+                            their medical summary and generate a detailed AI-powered history report.</p>
+
+                        <!-- UID Input -->
+                        <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-end mb-6">
+                            <div class="flex-1 max-w-sm">
+                                <label
+                                    class="block font-label-sm text-label-sm text-secondary mb-2 uppercase tracking-wider"
+                                    for="ai-patient-id">Patient UID</label>
+                                <div class="relative">
+                                    <span
+                                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">fingerprint</span>
+                                    <input
+                                        class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                                        id="ai-patient-id" placeholder="Enter Patient UID (e.g. 000-AA0000)"
+                                        type="text" />
+                                </div>
+                            </div>
+                            <button id="ai-analyze-btn" type="button"
+                                class="px-6 py-3 bg-primary hover:bg-surface-tint text-on-primary font-label-sm text-label-sm rounded-lg flex items-center gap-2 transition-colors shadow-sm">
+                                <span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+                                Generate AI Report
+                            </button>
+                        </div>
+
+                        <!-- AI Loading State -->
+                        <div id="ai-loading"
+                            class="hidden flex flex-col items-center justify-center py-12 gap-4 analyzing-glow rounded-xl border border-primary/20 bg-primary-fixed/30">
+                            <span
+                                class="material-symbols-outlined text-[40px] text-primary animate-spin">progress_activity</span>
+                            <p class="font-body-lg text-body-lg text-primary font-semibold">Analysing patient data with
+                                AI…</p>
+                            <p class="font-body-md text-body-md text-secondary">This may take a few seconds.</p>
+                        </div>
+
+                        <!-- AI Error -->
+                        <div id="ai-error"
+                            class="hidden mt-2 flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <span class="material-symbols-outlined text-red-600">error</span>
+                            <p id="ai-error-text" class="font-body-md text-body-md text-red-700"></p>
+                        </div>
+
+                        <!-- AI Report Output -->
+                        <div id="ai-report-container"
+                            class="hidden mt-4 p-6 bg-surface-container-low rounded-xl border border-outline-variant">
+                            <div class="flex items-center gap-2 mb-4 pb-3 border-b border-outline-variant">
+                                <span class="material-symbols-outlined text-primary">summarize</span>
+                                <h3 class="font-h2 text-h2 text-on-surface">Generated Patient History Report</h3>
+                            </div>
+                            <div id="ai-report-content" class="ai-report font-body-md text-body-md text-on-surface">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        // ── Firebase imports ──────────────────────────────────────────────────
+        import { db } from "../firebaseConfig.js";
+        import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // ── DOM refs ──────────────────────────────────────────────────────────
+        const patientIdInput = document.getElementById("patient-id");
+        const fetchBtn = document.getElementById("fetch-btn");
+        const reportsContainer = document.getElementById("reports-container");
+        const reportsList = document.getElementById("reports-list");
+        const noReports = document.getElementById("no-reports");
+        const fetchError = document.getElementById("fetch-error");
+        const errorText = document.getElementById("error-text");
+        const loading = document.getElementById("loading");
+
+        // ── Helpers ───────────────────────────────────────────────────────────
+        function formatBytes(bytes) {
+            if (bytes < 1024) return bytes + " B";
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+            return (bytes / 1048576).toFixed(1) + " MB";
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+        }
+
+        function showError(msg) {
+            errorText.textContent = msg;
+            fetchError.classList.remove("hidden");
+            noReports.classList.add("hidden");
+            reportsContainer.classList.add("hidden");
+            loading.classList.add("hidden");
+        }
+
+        function showNoReports() {
+            noReports.classList.remove("hidden");
+            fetchError.classList.add("hidden");
+            reportsContainer.classList.add("hidden");
+            loading.classList.add("hidden");
+        }
+
+        function base64ToBlob(base64Data) {
+            const parts = base64Data.split(",");
+            const mimeMatch = parts[0].match(/data:(.*);base64/);
+            const contentType = mimeMatch ? mimeMatch[1] : "application/pdf";
+            const byteString = atob(parts[1]);
+            const byteArray = new Uint8Array(byteString.length);
+            for (let i = 0; i < byteString.length; i += 1) {
+                byteArray[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([byteArray], { type: contentType });
+        }
+
+        function openPdf(fileData) {
+            const blob = base64ToBlob(fileData);
+            const url = URL.createObjectURL(blob);
+            window.open(url, "_blank");
+        }
+
+        function showReports(reports) {
+            reportsContainer.classList.remove("hidden");
+            noReports.classList.add("hidden");
+            fetchError.classList.add("hidden");
+            loading.classList.add("hidden");
+
+            reportsList.innerHTML = "";
+            reports.forEach(report => {
+                const reportDiv = document.createElement("div");
+                reportDiv.className = "flex items-center justify-between p-4 bg-surface-container-lowest rounded-lg border border-outline-variant";
+
+                const infoDiv = document.createElement("div");
+                infoDiv.className = "flex items-center gap-3";
+                infoDiv.innerHTML = `
+                        <span class="material-symbols-outlined text-primary text-[28px]">description</span>
+                        <div>
+                            <p class="font-label-sm text-label-sm text-on-surface">${report.fileName}</p>
+                            <p class="font-label-sm text-label-sm text-secondary">Uploaded: ${formatDate(report.uploadedAt)} | Size: ${formatBytes(report.size)}</p>
+                        </div>
+                    `;
+
+                const viewButton = document.createElement("button");
+                viewButton.type = "button";
+                viewButton.className = "px-4 py-2 bg-primary hover:bg-surface-tint text-on-primary font-label-sm text-label-sm rounded-lg transition-colors flex items-center gap-2";
+                viewButton.innerHTML = `<span class="material-symbols-outlined text-[16px]">visibility</span> View PDF`;
+                viewButton.addEventListener("click", () => openPdf(report.fileData));
+
+                reportDiv.appendChild(infoDiv);
+                reportDiv.appendChild(viewButton);
+                reportsList.appendChild(reportDiv);
+            });
+        }
+
+        function showLoading() {
+            loading.classList.remove("hidden");
+            fetchError.classList.add("hidden");
+            noReports.classList.add("hidden");
+            reportsContainer.classList.add("hidden");
+        }
+
+        // ── Fetch handler ─────────────────────────────────────────────────────
+        fetchBtn.addEventListener("click", async () => {
+            const patientId = patientIdInput.value.trim();
+            if (!patientId) {
+                showError("Please enter a Patient ID.");
+                return;
+            }
+
+            showLoading();
+
+            try {
+                // Check if patient document exists
+                const patientDocRef = doc(db, "Patients", patientId);
+                const patientSnap = await getDoc(patientDocRef);
+                if (!patientSnap.exists()) {
+                    showError(`No patient found with ID "${patientId}". Please check the ID.`);
+                    return;
+                }
+
+                // Fetch reports
+                const reportsRef = collection(db, "Patients", patientId, "reports");
+                const reportsSnap = await getDocs(reportsRef);
+                const reports = [];
+                reportsSnap.forEach(doc => {
+                    reports.push(doc.data());
+                });
+
+                if (reports.length === 0) {
+                    showNoReports();
+                } else {
+                    showReports(reports);
+                }
+            } catch (err) {
+                console.error("Fetch error:", err);
+                showError("Failed to fetch reports: " + err.message);
+            }
+        });
+
+        // ═══════════ AI Patient History Analysis ═══════════════════════════════
+        const AI_SERVER_URL = "http://localhost:3001/api/analyze";
+
+        const aiPatientIdInput = document.getElementById("ai-patient-id");
+        const aiAnalyzeBtn = document.getElementById("ai-analyze-btn");
+        const aiLoading = document.getElementById("ai-loading");
+        const aiError = document.getElementById("ai-error");
+        const aiErrorText = document.getElementById("ai-error-text");
+        const aiReportContainer = document.getElementById("ai-report-container");
+        const aiReportContent = document.getElementById("ai-report-content");
+
+        function showAiError(msg) {
+            aiErrorText.textContent = msg;
+            aiError.classList.remove("hidden");
+            aiLoading.classList.add("hidden");
+            aiReportContainer.classList.add("hidden");
+        }
+
+        function hideAiStates() {
+            aiError.classList.add("hidden");
+            aiLoading.classList.add("hidden");
+            aiReportContainer.classList.add("hidden");
+        }
+
+        /**
+         * Minimal Markdown → HTML converter
+         * Handles headings, bold, italic, lists, hr, code, paragraphs.
+         */
+        function markdownToHtml(md) {
+            let html = md
+                // Headings (match from #### down to #)
+                .replace(/^#### (.+)$/gm, '<h4>$1</h4>')
+                .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+                .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+                .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+                // Horizontal rules
+                .replace(/^---$/gm, '<hr>')
+                // Bold & italic
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                // Inline code
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                // Unordered lists (- or *)
+                .replace(/^[\-\*] (.+)$/gm, '<li>$1</li>')
+                // Ordered lists
+                .replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+
+            // Wrap consecutive <li> tags in <ul>
+            html = html.replace(/(<li>.*?<\/li>\s*)+/gs, (match) => {
+                return '<ul>' + match + '</ul>';
+            });
+
+            // Wrap remaining plain text lines in <p> tags
+            html = html.split('\n').map(line => {
+                const trimmed = line.trim();
+                if (!trimmed) return '';
+                if (trimmed.startsWith('<')) return trimmed;
+                return `<p>${trimmed}</p>`;
+            }).join('\n');
+
+            return html;
+        }
+
+        aiAnalyzeBtn.addEventListener("click", async () => {
+            const uid = aiPatientIdInput.value.trim();
+            if (!uid) { showAiError("Please enter a Patient UID."); return; }
+
+            hideAiStates();
+            aiLoading.classList.remove("hidden");
+            aiAnalyzeBtn.disabled = true;
+            aiAnalyzeBtn.innerHTML = `<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Analysing…`;
+
+            try {
+                // 1. Fetch full patient data from Firestore
+                const patientDocRef = doc(db, "Patients", uid);
+                const patientSnap = await getDoc(patientDocRef);
+                if (!patientSnap.exists()) {
+                    showAiError(`No patient found with UID "${uid}". Please check the ID.`);
+                    return;
+                }
+
+                const fullData = patientSnap.data();
+
+                // Only send medically relevant fields to the AI — no personal/contact/insurance data
+                const patientData = {
+                    fullName: fullData.fullName || null,
+                    dob: fullData.dob || null,
+                    gender: fullData.gender || null,
+                    medicalSummary: fullData.medicalSummary || {},
+                };
+
+                // 2. Send to backend proxy (API key stays on server)
+                const response = await fetch(AI_SERVER_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ patientData }),
+                });
+
+                if (!response.ok) {
+                    const errBody = await response.json().catch(() => ({}));
+                    throw new Error(errBody.error || `Server returned ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                // 3. Render the markdown report as HTML
+                aiLoading.classList.add("hidden");
+                aiReportContent.innerHTML = markdownToHtml(result.report);
+                aiReportContainer.classList.remove("hidden");
+
+            } catch (err) {
+                console.error("AI analysis error:", err);
+                showAiError(err.message || "Failed to generate AI report.");
+            } finally {
+                aiAnalyzeBtn.disabled = false;
+                aiAnalyzeBtn.innerHTML = `<span class="material-symbols-outlined text-[20px]">auto_awesome</span> Generate AI Report`;
+            }
+        });
+    </script>
+</body>
+
+</html>

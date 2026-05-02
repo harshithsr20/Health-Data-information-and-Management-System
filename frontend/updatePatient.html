@@ -142,7 +142,7 @@
             <ul class="flex flex-col gap-1">
                 <li>
                     <a class="flex items-center gap-3 px-6 py-4 text-secondary hover:text-on-surface hover:bg-surface-container transition-all cursor-pointer duration-200 ease-in-out"
-                        href="#">
+                        href="doc_homepage.html">
                         <span class="material-symbols-outlined">dashboard</span>
                         <span class="font-label-sm text-label-sm">Dashboard</span>
                     </a>
@@ -263,6 +263,85 @@
                     </div>
                     <!-- Recent Uploads (Col Span 1) -->
                 </div>
+
+                <!-- Update Medical Conditions & Habits Section -->
+                <div class="grid grid-cols-1 gap-gutter mt-gutter">
+                    <div
+                        class="bg-surface-container-lowest rounded-xl shadow-[0_15px_15px_rgba(0,0,0,0.04)] border border-outline-variant p-stack-md flex flex-col">
+                        <h2 class="font-h2 text-h2 text-on-surface mb-stack-sm pb-2 border-b border-outline-variant flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">medical_information</span>
+                            Update Medical Conditions &amp; Habits
+                        </h2>
+
+                        <!-- Patient UID Input -->
+                        <div class="mb-6 max-w-sm mt-4">
+                            <label class="block font-label-sm text-label-sm text-secondary mb-2 uppercase tracking-wider"
+                                for="med-patient-id">Patient UID</label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">fingerprint</span>
+                                <input
+                                    class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                                    id="med-patient-id" placeholder="Enter Patient UID (e.g. 000-AA0000)" type="text" />
+                            </div>
+                        </div>
+
+                        <!-- Fetch Current Conditions Button -->
+                        <div class="mb-6">
+                            <button id="fetch-med-btn" type="button"
+                                class="px-6 py-3 bg-primary hover:bg-surface-tint text-on-primary font-label-sm text-label-sm rounded-lg flex items-center gap-2 transition-colors shadow-sm">
+                                <span class="material-symbols-outlined text-[20px]">search</span>
+                                Fetch Patient Info
+                            </button>
+                        </div>
+
+                        <!-- Current Conditions Display -->
+                        <div id="current-med-info" class="hidden mb-6 p-4 bg-surface-container-low rounded-lg border border-outline-variant">
+                            <p class="font-label-sm text-label-sm text-secondary uppercase tracking-wider mb-2">Current Medical Conditions &amp; Habits</p>
+                            <p id="current-med-text" class="font-body-md text-body-md text-on-surface whitespace-pre-wrap">—</p>
+                        </div>
+
+                        <!-- Change Toggle -->
+                        <div id="med-change-toggle" class="hidden mb-6">
+                            <label class="block font-label-sm text-label-sm text-secondary mb-3 uppercase tracking-wider">Any change in Medical Conditions or Habits?</label>
+                            <div class="flex gap-3">
+                                <button id="med-yes-btn" type="button"
+                                    class="px-6 py-2 border border-outline-variant rounded-lg font-label-sm text-label-sm text-on-surface hover:bg-surface-container transition-colors">
+                                    Yes
+                                </button>
+                                <button id="med-no-btn" type="button"
+                                    class="px-6 py-2 border border-outline-variant rounded-lg font-label-sm text-label-sm text-on-surface hover:bg-surface-container transition-colors">
+                                    No
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Update Textarea (shown on Yes) -->
+                        <div id="med-update-fields" class="hidden mb-6">
+                            <label class="block font-label-sm text-label-sm text-secondary mb-2 uppercase tracking-wider"
+                                for="med-new-conditions">New Medical Conditions &amp; Habits</label>
+                            <textarea id="med-new-conditions" rows="5"
+                                class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm resize-vertical"
+                                placeholder="Enter updated medical conditions, habits (e.g. smoking, drinking), or allergies..."></textarea>
+                            <button id="save-med-btn" type="button"
+                                class="mt-4 px-6 py-3 bg-primary hover:bg-surface-tint text-on-primary font-label-sm text-label-sm rounded-lg flex items-center gap-2 transition-colors shadow-sm">
+                                <span class="material-symbols-outlined text-[20px]">save</span>
+                                Update Medical Info
+                            </button>
+                        </div>
+
+                        <!-- Status messages -->
+                        <div id="med-success" class="hidden mt-2 flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                            <span class="material-symbols-outlined text-green-600">check_circle</span>
+                            <p id="med-success-text" class="font-body-md text-body-md text-green-700"></p>
+                        </div>
+                        <div id="med-error" class="hidden mt-2 flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <span class="material-symbols-outlined text-red-600">error</span>
+                            <p id="med-error-text" class="font-body-md text-body-md text-red-700"></p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
@@ -270,7 +349,7 @@
     <script type="module">
         // ── Firebase imports (Firestore only — no Storage needed) ─────────────
         import { db } from "../firebaseConfig.js";
-        import { doc, getDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { doc, getDoc, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         // Max file size: ~700 KB raw → ~933 KB base64, within Firestore 1 MiB doc limit
         const MAX_FILE_SIZE = 700 * 1024;
@@ -447,6 +526,130 @@
             } finally {
                 uploadBtn.disabled = false;
                 uploadBtn.innerHTML = `<span class="material-symbols-outlined text-[20px]">cloud_upload</span> Upload Report`;
+            }
+        });
+
+        // ── Medical Conditions Update Logic ────────────────────────────────────
+        const medPatientIdInput = document.getElementById("med-patient-id");
+        const fetchMedBtn = document.getElementById("fetch-med-btn");
+        const currentMedInfo = document.getElementById("current-med-info");
+        const currentMedText = document.getElementById("current-med-text");
+        const medChangeToggle = document.getElementById("med-change-toggle");
+        const medYesBtn = document.getElementById("med-yes-btn");
+        const medNoBtn = document.getElementById("med-no-btn");
+        const medUpdateFields = document.getElementById("med-update-fields");
+        const medNewConditions = document.getElementById("med-new-conditions");
+        const saveMedBtn = document.getElementById("save-med-btn");
+        const medSuccess = document.getElementById("med-success");
+        const medSuccessText = document.getElementById("med-success-text");
+        const medError = document.getElementById("med-error");
+        const medErrorText = document.getElementById("med-error-text");
+
+        function showMedError(msg) {
+            medErrorText.textContent = msg;
+            medError.classList.remove("hidden");
+            medSuccess.classList.add("hidden");
+        }
+
+        function showMedSuccess(msg) {
+            medSuccessText.textContent = msg;
+            medSuccess.classList.remove("hidden");
+            medError.classList.add("hidden");
+        }
+
+        function hideMedMessages() {
+            medError.classList.add("hidden");
+            medSuccess.classList.add("hidden");
+        }
+
+        function resetMedSection() {
+            currentMedInfo.classList.add("hidden");
+            medChangeToggle.classList.add("hidden");
+            medUpdateFields.classList.add("hidden");
+            medYesBtn.classList.remove("bg-primary", "text-on-primary");
+            medNoBtn.classList.remove("bg-primary", "text-on-primary");
+            medNewConditions.value = "";
+            hideMedMessages();
+        }
+
+        // Fetch patient info and show current medical conditions
+        fetchMedBtn.addEventListener("click", async () => {
+            const uid = medPatientIdInput.value.trim();
+            if (!uid) { showMedError("Please enter a Patient UID."); return; }
+
+            resetMedSection();
+            fetchMedBtn.disabled = true;
+            fetchMedBtn.innerHTML = `<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Fetching…`;
+
+            try {
+                const patientDocRef = doc(db, "Patients", uid);
+                const patientSnap = await getDoc(patientDocRef);
+                if (!patientSnap.exists()) {
+                    showMedError(`No patient found with UID "${uid}". Please check the ID.`);
+                    return;
+                }
+
+                const data = patientSnap.data();
+                const currentConditions = data.medicalSummary?.allergies || "None recorded";
+                currentMedText.textContent = currentConditions;
+                currentMedInfo.classList.remove("hidden");
+                medChangeToggle.classList.remove("hidden");
+            } catch (err) {
+                console.error("Error fetching patient:", err);
+                showMedError("Could not fetch patient data. Please try again.");
+            } finally {
+                fetchMedBtn.disabled = false;
+                fetchMedBtn.innerHTML = `<span class="material-symbols-outlined text-[20px]">search</span> Fetch Patient Info`;
+            }
+        });
+
+        // Yes button — show textarea
+        medYesBtn.addEventListener("click", () => {
+            medYesBtn.classList.add("bg-primary", "text-on-primary");
+            medNoBtn.classList.remove("bg-primary", "text-on-primary");
+            medUpdateFields.classList.remove("hidden");
+            hideMedMessages();
+        });
+
+        // No button — hide textarea
+        medNoBtn.addEventListener("click", () => {
+            medNoBtn.classList.add("bg-primary", "text-on-primary");
+            medYesBtn.classList.remove("bg-primary", "text-on-primary");
+            medUpdateFields.classList.add("hidden");
+            hideMedMessages();
+        });
+
+        // Save updated medical conditions to Firebase
+        saveMedBtn.addEventListener("click", async () => {
+            const uid = medPatientIdInput.value.trim();
+            const newConditions = medNewConditions.value.trim();
+            if (!uid) { showMedError("Patient UID is missing."); return; }
+            if (!newConditions) { showMedError("Please enter the updated medical conditions."); return; }
+
+            hideMedMessages();
+            saveMedBtn.disabled = true;
+            saveMedBtn.innerHTML = `<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Saving…`;
+
+            try {
+                const patientDocRef = doc(db, "Patients", uid);
+                await updateDoc(patientDocRef, {
+                    "medicalSummary.allergies": newConditions
+                });
+
+                // Update the displayed current conditions
+                currentMedText.textContent = newConditions;
+                medNewConditions.value = "";
+                medUpdateFields.classList.add("hidden");
+                medYesBtn.classList.remove("bg-primary", "text-on-primary");
+                medNoBtn.classList.remove("bg-primary", "text-on-primary");
+
+                showMedSuccess(`Medical conditions updated successfully for patient ${uid}.`);
+            } catch (err) {
+                console.error("Update error:", err);
+                showMedError("Failed to update: " + err.message);
+            } finally {
+                saveMedBtn.disabled = false;
+                saveMedBtn.innerHTML = `<span class="material-symbols-outlined text-[20px]">save</span> Update Medical Info`;
             }
         });
     </script>
