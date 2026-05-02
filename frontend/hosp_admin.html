@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>St. Grace Medical - Staff Management Dashboard</title>
+        <script>
+                const originalWarn = console.warn;
+                console.warn = function (...args) {
+                        if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) {
+                                return;
+                        }
+                        originalWarn.apply(console, args);
+                };
+        </script>
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+                rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap"
+                rel="stylesheet" />
+        <script id="tailwind-config">
+                tailwind.config = {
+                        darkMode: "class",
+                        theme: {
+                                extend: {
+                                        "colors": {
+                                                "primary-fixed": "#d5e3ff",
+                                                "on-primary-fixed": "#001b3c",
+                                                "surface-container-highest": "#e0e3e5",
+                                                "surface-dim": "#d8dadc",
+                                                "on-error-container": "#93000a",
+                                                "on-tertiary": "#ffffff",
+                                                "tertiary-fixed-dim": "#76d6d5",
+                                                "primary-container": "#003366",
+                                                "secondary-container": "#68abff",
+                                                "on-primary": "#ffffff",
+                                                "tertiary-container": "#003a3a",
+                                                "on-secondary-fixed-variant": "#004883",
+                                                "surface-container-lowest": "#ffffff",
+                                                "outline": "#737780",
+                                                "on-secondary": "#ffffff",
+                                                "secondary-fixed": "#d4e3ff",
+                                                "on-primary-container": "#799dd6",
+                                                "secondary": "#0060ac",
+                                                "on-secondary-fixed": "#001c39",
+                                                "primary-fixed-dim": "#a7c8ff",
+                                                "surface-container-high": "#e6e8ea",
+                                                "on-tertiary-fixed-variant": "#004f4f",
+                                                "inverse-surface": "#2d3133",
+                                                "surface-tint": "#3a5f94",
+                                                "error-container": "#ffdad6",
+                                                "primary": "#001e40",
+                                                "on-error": "#ffffff",
+                                                "surface-bright": "#f7f9fb",
+                                                "surface": "#f7f9fb",
+                                                "secondary-fixed-dim": "#a4c9ff",
+                                                "on-surface": "#191c1e",
+                                                "outline-variant": "#c3c6d1",
+                                                "inverse-on-surface": "#eff1f3",
+                                                "on-surface-variant": "#43474f",
+                                                "on-background": "#191c1e",
+                                                "surface-variant": "#e0e3e5",
+                                                "error": "#ba1a1a",
+                                                "on-tertiary-fixed": "#002020",
+                                                "surface-container": "#eceef0",
+                                                "on-primary-fixed-variant": "#1f477b",
+                                                "on-secondary-container": "#003e73",
+                                                "surface-container-low": "#f2f4f6",
+                                                "tertiary": "#002323",
+                                                "inverse-primary": "#a7c8ff",
+                                                "background": "#f7f9fb",
+                                                "on-tertiary-container": "#47aaaa",
+                                                "tertiary-fixed": "#93f2f2"
+                                        },
+                                        "borderRadius": {
+                                                "DEFAULT": "0.125rem",
+                                                "lg": "0.25rem",
+                                                "xl": "0.5rem",
+                                                "full": "0.75rem",
+                                                "2xl": "1rem",
+                                                "3xl": "1.5rem"
+                                        },
+                                        "spacing": {
+                                                "md": "24px",
+                                                "lg": "40px",
+                                                "sm": "12px",
+                                                "xs": "4px",
+                                                "gutter": "24px",
+                                                "margin": "48px",
+                                                "base": "8px",
+                                                "xl": "64px",
+                                                "2xl": "96px"
+                                        },
+                                        "fontFamily": {
+                                                "body-md": ["Inter", "sans-serif"],
+                                                "data-tabular": ["Inter", "sans-serif"],
+                                                "h1": ["Manrope", "sans-serif"],
+                                                "body-lg": ["Inter", "sans-serif"],
+                                                "h3": ["Manrope", "sans-serif"],
+                                                "h2": ["Manrope", "sans-serif"],
+                                                "label-caps": ["Inter", "sans-serif"]
+                                        },
+                                        "fontSize": {
+                                                "body-md": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                                                "data-tabular": ["14px", { "lineHeight": "1", "fontWeight": "500" }],
+                                                "h1": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                                                "body-lg": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                                                "h3": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                                                "h2": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                                                "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                                        }
+                                }
+                        }
+                }
+        </script>
+        <style>
+                .sidebar-item {
+                        position: relative;
+                }
+
+                .sidebar-item.active::before {
+                        content: '';
+                        position: absolute;
+                        left: 0;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        height: 60%;
+                        width: 4px;
+                        background-color: #003366;
+                        /* primary-container */
+                        border-radius: 0 4px 4px 0;
+                }
+
+                /* ── Mobile Sidebar Toggle ── */
+                #sidebar-overlay {
+                        display: none;
+                        position: fixed;
+                        inset: 0;
+                        background: rgba(0, 0, 0, 0.4);
+                        backdrop-filter: blur(4px);
+                        -webkit-backdrop-filter: blur(4px);
+                        z-index: 45;
+                        transition: opacity 0.3s ease;
+                }
+
+                #sidebar-overlay.active {
+                        display: block;
+                }
+
+                #hamburger-btn {
+                        display: none;
+                }
+
+                @media (max-width: 767px) {
+                        #hamburger-btn {
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                width: 40px;
+                                height: 40px;
+                                border: none;
+                                background: transparent;
+                                cursor: pointer;
+                                border-radius: 12px;
+                                color: #43474f;
+                                transition: background 0.2s;
+                                flex-shrink: 0;
+                        }
+
+                        #hamburger-btn:hover {
+                                background: #f0f4f8;
+                        }
+
+                        /* Sidebar hidden off-screen by default on mobile */
+                        aside#sidebar {
+                                transform: translateX(-100%);
+                                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        }
+
+                        aside#sidebar.open {
+                                transform: translateX(0);
+                        }
+
+                        /* Main content takes full width on mobile */
+                        main#main-content {
+                                margin-left: 0 !important;
+                        }
+
+                        /* Reduce page padding on mobile */
+                        .page-content-area {
+                                padding: 20px 16px !important;
+                        }
+
+                        /* Stack header content */
+                        .header-bar {
+                                padding-left: 12px !important;
+                                padding-right: 12px !important;
+                                height: auto !important;
+                                min-height: 60px;
+                                padding-top: 8px;
+                                padding-bottom: 8px;
+                        }
+
+                        /* Page header stacks vertically */
+                        .page-header {
+                                flex-direction: column !important;
+                                align-items: flex-start !important;
+                                gap: 12px;
+                        }
+
+                        /* Staff title smaller on mobile */
+                        .page-header h2 {
+                                font-size: 1.75rem !important;
+                        }
+
+                        /* Date card full width */
+                        .date-card {
+                                text-align: left !important;
+                                width: 100%;
+                        }
+
+                        /* Stats card and action panel stack */
+                        .top-content-row {
+                                flex-direction: column !important;
+                        }
+
+                        .top-content-row>div {
+                                width: 100% !important;
+                        }
+
+                        /* Action buttons stack on mobile */
+                        .action-buttons {
+                                flex-direction: column !important;
+                                width: 100%;
+                        }
+
+                        .action-buttons button {
+                                width: 100%;
+                        }
+
+                        /* Table horizontal scroll */
+                        .table-wrapper {
+                                overflow-x: auto;
+                                -webkit-overflow-scrolling: touch;
+                        }
+
+                        /* Table footer stacks */
+                        .table-footer {
+                                flex-direction: column !important;
+                                gap: 8px;
+                                text-align: center;
+                        }
+
+                        /* Staff directory header stacks */
+                        .directory-header {
+                                flex-direction: column !important;
+                                gap: 8px;
+                        }
+                }
+
+                @media (max-width: 480px) {
+                        .page-header h2 {
+                                font-size: 1.4rem !important;
+                        }
+
+                        .stats-number {
+                                font-size: 2.5rem !important;
+                        }
+
+                        .action-panel-title {
+                                font-size: 1.4rem !important;
+                        }
+                }
+        </style>
+</head>
+
+<body
+        class="bg-[#f0f4f8] text-on-background font-body-md min-h-screen flex selection:bg-primary-fixed selection:text-on-primary-fixed">
+        <!-- Sidebar Overlay (mobile) -->
+        <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+        <!-- SideNavBar Component -->
+        <aside id="sidebar"
+                class="bg-white border-r border-slate-200 text-slate-700 font-manrope text-sm font-semibold fixed left-0 top-0 h-full w-[260px] flex flex-col p-6 transition-all duration-200 z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+                <!-- Header -->
+                <div class="mb-12 flex items-center space-x-3">
+                        <div
+                                class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container shadow-sm flex items-center justify-center shrink-0 text-white">
+                                <span class="material-symbols-outlined" data-icon="local_hospital">local_hospital</span>
+                        </div>
+                        <div>
+                                <h1 id="hospital-name"
+                                        class="text-base font-bold text-primary leading-tight tracking-tight">Loading...
+                                </h1>
+                                <p class="font-body-md text-[11px] text-slate-500 font-medium">Administration</p>
+                        </div>
+                </div>
+                <!-- Navigation Links -->
+                <nav class="flex-1 space-y-2 -mx-2">
+                        <!-- Active State for Staff Management -->
+                        <a class="sidebar-item active flex items-center space-x-3 px-4 py-3 bg-primary-fixed/30 text-primary rounded-xl transition-all duration-200 group"
+                                href="#">
+                                <span class="material-symbols-outlined text-[22px]" data-icon="badge" data-weight="fill"
+                                        style="font-variation-settings: 'FILL' 1;">badge</span>
+                                <span class="font-bold">Staff Management</span>
+                        </a>
+                </nav>
+                <!-- Footer Links -->
+                <div class="mt-auto pt-6 border-t border-slate-100 space-y-2 -mx-2">
+                        <a id="logout-btn"
+                                class="flex items-center space-x-3 px-4 py-3 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group"
+                                href="#">
+                                <span class="material-symbols-outlined text-[22px] group-hover:scale-110 transition-transform"
+                                        data-icon="logout">logout</span>
+                                <span class="font-medium">Log Out</span>
+                        </a>
+                </div>
+        </aside>
+        <!-- Main Content Area -->
+        <main id="main-content" class="flex-1 ml-[260px] min-h-screen flex flex-col">
+                <!-- TopAppBar Component -->
+                <header
+                        class="header-bar bg-white/80 backdrop-blur-md font-manrope text-sm font-medium border-b border-slate-200 flex justify-between items-center w-full px-8 h-[72px] z-40 sticky top-0">
+                        <div class="flex items-center space-x-4 flex-1">
+                                <!-- Hamburger Button (mobile) -->
+                                <button id="hamburger-btn" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                                        <span class="material-symbols-outlined text-[26px]">menu</span>
+                                </button>
+                                <!-- Search Bar -->
+                                <div class="relative w-full max-w-md hidden md:block group">
+                                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors"
+                                                data-icon="search">search</span>
+                                        <input class="w-full h-11 pl-12 pr-4 bg-slate-50 border-none rounded-2xl text-body-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white shadow-inner transition-all placeholder:text-slate-400"
+                                                placeholder="Search staff, departments..." type="text" />
+                                </div>
+                        </div>
+                </header>
+                <!-- Page Content -->
+                <div class="page-content-area flex-1 p-8 md:p-12 lg:px-16 lg:py-12 max-w-[1600px] mx-auto w-full">
+                        <!-- Page Header -->
+                        <div
+                                class="page-header flex flex-col md:flex-row md:justify-between md:items-end mb-12 space-y-4 md:space-y-0">
+                                <div>
+                                        <h2 class="font-h1 text-4xl text-primary tracking-tight mb-2">Staff Management
+                                        </h2>
+                                        <p class="font-body-lg text-slate-500 max-w-xl">Welcome back. Here is the
+                                                current overview of your
+                                                medical staff across all departments.</p>
+                                </div>
+                                <div
+                                        class="date-card text-left md:text-right bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100 inline-flex flex-col justify-center">
+                                        <p
+                                                class="font-label-caps text-[10px] text-slate-400 uppercase tracking-widest mb-1">
+                                                Today's Date
+                                        </p>
+                                        <p class="font-h3 text-slate-800" id="live-date"></p>
+                                </div>
+                        </div>
+                        <!-- Top Content Row -->
+                        <div class="top-content-row flex flex-col xl:flex-row gap-6 mb-8">
+                                <!-- Key Stats: Total Doctors -->
+                                <div
+                                        class="xl:w-1/3 bg-white rounded-3xl p-8 shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow">
+                                        <!-- Decorative accent -->
+                                        <div
+                                                class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary-fixed/40 to-transparent rounded-bl-full opacity-50 group-hover:scale-110 transition-transform duration-500">
+                                        </div>
+                                        <div class="flex justify-between items-start mb-8 relative z-10">
+                                                <div
+                                                        class="w-14 h-14 rounded-2xl bg-primary-fixed/50 flex items-center justify-center shadow-inner">
+                                                        <span class="material-symbols-outlined text-[28px] text-primary"
+                                                                data-icon="stethoscope">stethoscope</span>
+                                                </div>
+                                                <span
+                                                        class="inline-flex items-center px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[11px] uppercase tracking-wide border border-emerald-100 shadow-sm">
+                                                        <span
+                                                                class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+                                                        Active Status
+                                                </span>
+                                        </div>
+                                        <div class="relative z-10">
+                                                <p
+                                                        class="font-label-caps text-slate-500 uppercase tracking-widest mb-2 font-semibold">
+                                                        Total
+                                                        Doctors</p>
+                                                <div class="flex items-end space-x-4">
+                                                        <span
+                                                                class="stats-number font-h1 text-5xl text-primary font-extrabold tracking-tight">248</span>
+                                                        <div
+                                                                class="flex items-center bg-blue-50 px-2.5 py-1 rounded-lg mb-1">
+                                                                <span class="material-symbols-outlined text-[16px] text-blue-600 mr-1"
+                                                                        data-icon="trending_up">trending_up</span>
+                                                                <span class="font-medium text-sm text-blue-700">+12 this
+                                                                        month</span>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                                <!-- Quick Actions Panel -->
+                                <div
+                                        class="xl:w-2/3 bg-gradient-to-br from-primary to-primary-container rounded-3xl p-8 lg:p-10 flex flex-col lg:flex-row items-center justify-between overflow-hidden relative shadow-lg">
+                                        <!-- Decorative abstract background -->
+                                        <div class="absolute inset-0 opacity-20 pointer-events-none"
+                                                style="background-image: radial-gradient(circle at 80% 20%, #ffffff 0%, transparent 60%);">
+                                        </div>
+                                        <div
+                                                class="absolute -bottom-24 -left-24 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none">
+                                        </div>
+                                        <div class="relative z-10 mb-8 lg:mb-0 max-w-md">
+                                                <h3
+                                                        class="action-panel-title font-h2 text-3xl text-white mb-3 font-bold tracking-tight">
+                                                        Streamline Staff
+                                                        Operations</h3>
+                                                <p
+                                                        class="font-body-md text-primary-fixed text-base leading-relaxed opacity-90">
+                                                        Quickly onboard
+                                                        new medical professionals or adjust departmental structures to
+                                                        maintain optimal patient
+                                                        care.</p>
+                                        </div>
+                                        <div
+                                                class="action-buttons relative z-10 flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+                                                <button onclick="window.location.href='doc_reg.html'"
+                                                        class="flex items-center justify-center px-6 py-4 bg-white text-primary font-bold text-sm rounded-2xl hover:bg-slate-50 hover:shadow-lg hover:-translate-y-0.5 transition-all shadow-md group">
+                                                        <span class="material-symbols-outlined mr-2 text-[22px] group-hover:scale-110 transition-transform"
+                                                                data-icon="person_add">person_add</span>
+                                                        <div class="flex flex-col items-start">
+                                                                <span class="leading-none">Onboard New</span>
+                                                                <span class="leading-none mt-1 opacity-70 text-[11px]">Doctor
+                                                                        Profile</span>
+                                                        </div>
+                                                </button>
+                                                <button
+                                                        class="flex items-center justify-center px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-bold text-sm rounded-2xl hover:bg-white/20 transition-all group">
+                                                        <span class="material-symbols-outlined mr-2 text-[22px] group-hover:scale-110 transition-transform"
+                                                                data-icon="domain">domain</span>
+                                                        <div class="flex flex-col items-start">
+                                                                <span class="leading-none">Manage</span>
+                                                                <span
+                                                                        class="leading-none mt-1 opacity-70 text-[11px]">Departments</span>
+                                                        </div>
+                                                </button>
+                                        </div>
+                                </div>
+                        </div>
+                        <!-- Additional placeholder for content to fill out the page structure visually -->
+                        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                                <div class="px-8 py-6 border-b border-slate-100 flex flex-col space-y-4">
+                                        <div class="directory-header flex items-center justify-between">
+                                                <h3 class="font-h2 text-xl text-primary font-bold">Medical Staff
+                                                        Directory</h3>
+                                                <div class="flex space-x-3">
+                                                        <button
+                                                                class="flex items-center space-x-2 px-4 py-2 border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-colors text-sm font-medium">
+                                                                <span
+                                                                        class="material-symbols-outlined text-[20px]">filter_list</span>
+                                                                <span>Filter</span>
+                                                        </button>
+                                                </div>
+                                        </div>
+                                        <div class="relative w-full group">
+                                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors"
+                                                        data-icon="search">search</span>
+                                                <input class="w-full h-11 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-2xl text-body-md text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white shadow-sm transition-all placeholder:text-slate-400"
+                                                        placeholder="Search by doctor name or ID..." type="text" />
+                                        </div>
+                                </div>
+                                <div class="table-wrapper overflow-x-auto">
+                                        <table class="w-full text-left border-collapse">
+                                                <thead>
+                                                        <tr class="bg-slate-50/50">
+                                                                <th
+                                                                        class="px-8 py-4 font-label-caps text-[11px] text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                                                                        Doctor Name</th>
+                                                                <th
+                                                                        class="px-6 py-4 font-label-caps text-[11px] text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                                                                        Specialty</th>
+                                                                <th
+                                                                        class="px-6 py-4 font-label-caps text-[11px] text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                                                                        Department</th>
+                                                                <th
+                                                                        class="px-6 py-4 font-label-caps text-[11px] text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                                                                        Status</th>
+                                                                <th
+                                                                        class="px-8 py-4 font-label-caps text-[11px] text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">
+                                                                        Actions</th>
+                                                        </tr>
+                                                </thead>
+                                                <tbody id="doctor-list" class="divide-y divide-slate-100">
+                                                </tbody>
+                                        </table>
+                                </div>
+                                <div
+                                        class="table-footer px-8 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                                        <span id="showing-text">Showing 0 medical professionals</span>
+                                        <div class="flex space-x-2">
+                                                <button class="px-3 py-1 border border-slate-200 rounded-md bg-white disabled:opacity-50"
+                                                        disabled="">Previous</button>
+                                                <button
+                                                        class="px-3 py-1 border border-slate-200 rounded-md bg-white hover:bg-slate-50">Next</button>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </main>
+        <script>
+                document.getElementById('live-date').textContent = new Date().toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                });
+
+                // Mobile sidebar toggle
+                function toggleSidebar() {
+                        const sidebar = document.getElementById('sidebar');
+                        const overlay = document.getElementById('sidebar-overlay');
+                        sidebar.classList.toggle('open');
+                        overlay.classList.toggle('active');
+                        document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+                }
+
+                // Close sidebar on resize to desktop
+                window.addEventListener('resize', () => {
+                        if (window.innerWidth >= 768) {
+                                const sidebar = document.getElementById('sidebar');
+                                const overlay = document.getElementById('sidebar-overlay');
+                                sidebar.classList.remove('open');
+                                overlay.classList.remove('active');
+                                document.body.style.overflow = '';
+                        }
+                });
+        </script>
+        <script type="module" src="./scripts/hosp_admin.js"></script>
+</body>
+
+</html>
