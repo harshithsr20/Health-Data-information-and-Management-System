@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ClinicalConnect - Patient Records</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#005eb8",
+                        "secondary": "#505f76",
+                        "on-primary-fixed": "#001b3d",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#c8daff",
+                        "surface-tint": "#005db6",
+                        "tertiary-container": "#596067",
+                        "secondary-fixed": "#d3e4fe",
+                        "surface-container-highest": "#e0e3e5",
+                        "inverse-on-surface": "#eff1f3",
+                        "tertiary-fixed": "#dde3eb",
+                        "surface-variant": "#e0e3e5",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "on-tertiary-fixed": "#161c22",
+                        "surface-dim": "#d8dadc",
+                        "outline": "#727783",
+                        "outline-variant": "#c2c6d4",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#c1c7cf",
+                        "on-surface-variant": "#424752",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "on-background": "#191c1e",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed": "#0b1c30",
+                        "on-tertiary-fixed-variant": "#41474e",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-tertiary-container": "#d4dae2",
+                        "secondary-container": "#d0e1fb",
+                        "surface": "#f7f9fb",
+                        "on-secondary-container": "#54647a",
+                        "primary": "#00478d",
+                        "surface-container": "#eceef0",
+                        "inverse-surface": "#2d3133",
+                        "tertiary": "#42484f",
+                        "background": "#f7f9fb",
+                        "primary-fixed-dim": "#a9c7ff",
+                        "on-surface": "#191c1e",
+                        "primary-fixed": "#d6e3ff",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary": "#ffffff",
+                        "inverse-primary": "#a9c7ff",
+                        "on-primary-fixed-variant": "#00468c",
+                        "surface-container-high": "#e6e8ea"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "40px",
+                        "stack-sm": "12px",
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "gutter": "32px",
+                        "stack-lg": "48px",
+                        "sidebar-width": "280px",
+                        "stack-md": "24px"
+                    },
+                    "fontFamily": {
+                        "h1": ["Inter", "sans-serif"],
+                        "display": ["Inter", "sans-serif"],
+                        "label-caps": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "h2": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "label-sm": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "h1": ["24px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display": ["36px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "h2": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background text-on-background font-body-md text-body-md antialiased flex h-screen overflow-hidden">
+    <!-- SideNavBar -->
+    <nav
+        class="fixed left-0 top-0 w-[280px] h-full border-r border-outline-variant bg-surface-container-lowest flex flex-col py-8 z-20">
+        <div class="px-6 mb-8 flex items-center gap-3">
+            <div
+                class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+                <span class="material-symbols-outlined" data-weight="fill"
+                    style="font-variation-settings: 'FILL' 1;">local_hospital</span>
+            </div>
+            <div>
+                <div class="font-h2 text-h2 text-primary font-black">Medical Admin</div>
+                <div class="font-label-sm text-label-sm text-secondary">Clinical Precision v1.0</div>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto">
+            <ul class="flex flex-col gap-1">
+                <li>
+                    <a class="flex items-center gap-3 px-6 py-4 text-secondary hover:text-on-surface hover:bg-surface-container transition-all cursor-pointer duration-200 ease-in-out"
+                        href="doc_homepage.html">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span class="font-label-sm text-label-sm">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="flex items-center gap-3 px-6 py-4 text-primary bg-primary-fixed border-l-4 border-primary transition-all cursor-pointer duration-200 ease-in-out"
+                        href="#">
+                        <span class="material-symbols-outlined">clinical_notes</span>
+                        <span class="font-label-sm text-label-sm">Patient Records</span>
+                    </a>
+                </li>
+                <li>
+                </li>
+                <li>
+                </li>
+                <li>
+                </li>
+            </ul>
+        </div>
+        <div class="mt-auto border-t border-outline-variant pt-4">
+            <ul class="flex flex-col gap-1">
+                <li>
+                    <a id="logout-btn" class="flex items-center gap-3 px-6 py-4 text-secondary hover:text-on-surface hover:bg-surface-container transition-all cursor-pointer duration-200 ease-in-out"
+                        href="#">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span class="font-label-sm text-label-sm">Log Out</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Main Wrapper -->
+    <div class="flex-1 ml-[280px] flex flex-col min-w-0">
+        <!-- TopAppBar -->
+        <header
+            class="bg-surface-container-lowest w-full top-0 border-b border-outline-variant flex justify-between items-center h-16 px-10 shadow-[0_15px_15px_rgba(0,0,0,0.04)] z-10 sticky">
+        </header>
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-margin-page bg-background">
+            <div class="max-w-container-max mx-auto flex flex-col gap-gutter">
+                <!-- Page Header -->
+                <div>
+                    <h1 class="font-display text-display text-on-surface mb-2">Update Patient Records</h1>
+                    <p class="font-body-lg text-body-lg text-secondary">Upload and manage diagnostic reports for UID:
+                        #PT-88492</p>
+                </div>
+                <!-- Content Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+                    <!-- Upload Zone (Col Span 2) -->
+                    <div class="mb-6 max-w-sm">
+                        <label class="block font-label-sm text-label-sm text-secondary mb-2 uppercase tracking-wider"
+                            for="patient-id">Patient ID</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">fingerprint</span>
+                            <input
+                                class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                                id="patient-id" placeholder="Enter Patient ID (e.g. #PT-88492)" type="text" />
+                        </div>
+                    </div>
+                    <div
+                        class="bg-surface-container-lowest rounded-xl shadow-[0_15px_15px_rgba(0,0,0,0.04)] border border-outline-variant p-stack-md flex flex-col lg:col-span-3">
+                        <h2 class="font-h2 text-h2 text-on-surface mb-stack-sm pb-2 border-b border-outline-variant">
+                            Report Upload</h2>
+                        <!-- Hidden file input -->
+                        <input type="file" id="pdf-file-input" accept=".pdf" class="hidden" />
+                        <div id="drop-zone"
+                            class="mt-4 flex-1 border-2 border-dashed border-outline-variant rounded-xl bg-surface flex flex-col items-center justify-center p-12 hover:border-primary transition-colors cursor-pointer group">
+                            <div
+                                class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                                <span class="material-symbols-outlined text-[32px] text-primary">cloud_upload</span>
+                            </div>
+                            <h3 class="font-h2 text-h2 text-on-surface mb-2">Drag &amp; Drop PDF Here</h3>
+                            <p class="font-body-md text-body-md text-secondary mb-6 text-center max-w-md">Supported
+                                format: PDF. Maximum file size: 1MB per document (Firestore free tier). Ensure all
+                                documents meet HIPAA compliance standards.</p>
+                            <button id="browse-btn" type="button"
+                                class="px-6 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-label-sm text-label-sm text-on-surface hover:bg-surface-container transition-colors shadow-sm">
+                                Browse Files
+                            </button>
+                        </div>
+                        <!-- Selected file info -->
+                        <div id="file-info" class="hidden mt-4 flex items-center gap-3 p-4 bg-surface rounded-lg border border-outline-variant">
+                            <span class="material-symbols-outlined text-primary text-[28px]">description</span>
+                            <div class="flex-1 min-w-0">
+                                <p id="file-name" class="font-label-sm text-label-sm text-on-surface truncate"></p>
+                                <p id="file-size" class="font-label-sm text-label-sm text-secondary"></p>
+                            </div>
+                            <button id="remove-file-btn" type="button" class="text-error hover:text-on-error-container transition-colors">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <!-- Report Type input -->
+                        <div class="mt-4">
+                            <label class="block font-label-sm text-label-sm text-secondary mb-2 uppercase tracking-wider"
+                                for="report-type">Report Type</label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">lab_profile</span>
+                                <input
+                                    class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                                    id="report-type" placeholder="e.g. Blood Test, X-Ray, MRI Scan, ECG" type="text" />
+                            </div>
+                        </div>
+                        <!-- Progress bar -->
+                        <div id="progress-container" class="hidden mt-4">
+                            <div class="flex justify-between mb-1">
+                                <span class="font-label-sm text-label-sm text-secondary">Uploading…</span>
+                                <span id="progress-pct" class="font-label-sm text-label-sm text-primary">0%</span>
+                            </div>
+                            <div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+                                <div id="progress-bar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <!-- Upload button -->
+                        <button id="upload-btn" type="button" disabled
+                            class="mt-6 w-full py-3 bg-primary text-on-primary font-label-sm text-label-sm rounded-lg flex items-center justify-center gap-2 transition-colors hover:bg-surface-tint disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
+                            <span class="material-symbols-outlined text-[20px]">cloud_upload</span>
+                            Upload Report
+                        </button>
+                        <!-- Status messages -->
+                        <div id="upload-success" class="hidden mt-4 flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                            <span class="material-symbols-outlined text-green-600">check_circle</span>
+                            <p id="success-text" class="font-body-md text-body-md text-green-700"></p>
+                        </div>
+                        <div id="upload-error" class="hidden mt-4 flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <span class="material-symbols-outlined text-red-600">error</span>
+                            <p id="error-text" class="font-body-md text-body-md text-red-700"></p>
+                        </div>
+                    </div>
+                    <!-- Recent Uploads (Col Span 1) -->
+                </div>
+
+                <!-- Update Medical Conditions & Habits Section -->
+                <div class="grid grid-cols-1 gap-gutter mt-gutter">
+                    <div
+                        class="bg-surface-container-lowest rounded-xl shadow-[0_15px_15px_rgba(0,0,0,0.04)] border border-outline-variant p-stack-md flex flex-col">
+                        <h2 class="font-h2 text-h2 text-on-surface mb-stack-sm pb-2 border-b border-outline-variant flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">medical_information</span>
+                            Update Medical Conditions &amp; Habits
+                        </h2>
+
+                        <!-- Patient UID Input -->
+                        <div class="mb-6 max-w-sm mt-4">
+                            <label class="block font-label-sm text-label-sm text-secondary mb-2 uppercase tracking-wider"
+                                for="med-patient-id">Patient UID</label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">fingerprint</span>
+                                <input
+                                    class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                                    id="med-patient-id" placeholder="Enter Patient UID (e.g. 000-AA0000)" type="text" />
+                            </div>
+                        </div>
+
+                        <!-- Fetch Current Conditions Button -->
+                        <div class="mb-6">
+                            <button id="fetch-med-btn" type="button"
+                                class="px-6 py-3 bg-primary hover:bg-surface-tint text-on-primary font-label-sm text-label-sm rounded-lg flex items-center gap-2 transition-colors shadow-sm">
+                                <span class="material-symbols-outlined text-[20px]">search</span>
+                                Fetch Patient Info
+                            </button>
+                        </div>
+
+                        <!-- Current Conditions Display -->
+                        <div id="current-med-info" class="hidden mb-6 p-4 bg-surface-container-low rounded-lg border border-outline-variant">
+                            <p class="font-label-sm text-label-sm text-secondary uppercase tracking-wider mb-2">Current Medical Conditions &amp; Habits</p>
+                            <p id="current-med-text" class="font-body-md text-body-md text-on-surface whitespace-pre-wrap">—</p>
+                        </div>
+
+                        <!-- Change Toggle -->
+                        <div id="med-change-toggle" class="hidden mb-6">
+                            <label class="block font-label-sm text-label-sm text-secondary mb-3 uppercase tracking-wider">Any change in Medical Conditions or Habits?</label>
+                            <div class="flex gap-3">
+                                <button id="med-yes-btn" type="button"
+                                    class="px-6 py-2 border border-outline-variant rounded-lg font-label-sm text-label-sm text-on-surface hover:bg-surface-container transition-colors">
+                                    Yes
+                                </button>
+                                <button id="med-no-btn" type="button"
+                                    class="px-6 py-2 border border-outline-variant rounded-lg font-label-sm text-label-sm text-on-surface hover:bg-surface-container transition-colors">
+                                    No
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Update Textarea (shown on Yes) -->
+                        <div id="med-update-fields" class="hidden mb-6">
+                            <label class="block font-label-sm text-label-sm text-secondary mb-2 uppercase tracking-wider"
+                                for="med-new-conditions">New Medical Conditions &amp; Habits</label>
+                            <textarea id="med-new-conditions" rows="5"
+                                class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm resize-vertical"
+                                placeholder="Enter updated medical conditions, habits (e.g. smoking, drinking), or allergies..."></textarea>
+                            <button id="save-med-btn" type="button"
+                                class="mt-4 px-6 py-3 bg-primary hover:bg-surface-tint text-on-primary font-label-sm text-label-sm rounded-lg flex items-center gap-2 transition-colors shadow-sm">
+                                <span class="material-symbols-outlined text-[20px]">save</span>
+                                Update Medical Info
+                            </button>
+                        </div>
+
+                        <!-- Status messages -->
+                        <div id="med-success" class="hidden mt-2 flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                            <span class="material-symbols-outlined text-green-600">check_circle</span>
+                            <p id="med-success-text" class="font-body-md text-body-md text-green-700"></p>
+                        </div>
+                        <div id="med-error" class="hidden mt-2 flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <span class="material-symbols-outlined text-red-600">error</span>
+                            <p id="med-error-text" class="font-body-md text-body-md text-red-700"></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        // ── Firebase imports ──────────────────────────────────────────────────
+        import { db, auth } from "../firebaseConfig.js";
+        import { doc, getDoc, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+        // ── Auth Check ────────────────────────────────────────────────────────
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // Not logged in, redirect to doctor login
+                window.location.href = "doc_login.html";
+            }
+        });
+
+        // Max file size: ~700 KB raw → ~933 KB base64, within Firestore 1 MiB doc limit
+        const MAX_FILE_SIZE = 700 * 1024;
+
+        // ── DOM refs ──────────────────────────────────────────────────────────
+        const patientIdInput = document.getElementById("patient-id");
+        const fileInput = document.getElementById("pdf-file-input");
+        const dropZone = document.getElementById("drop-zone");
+        const browseBtn = document.getElementById("browse-btn");
+        const fileInfo = document.getElementById("file-info");
+        const fileNameEl = document.getElementById("file-name");
+        const fileSizeEl = document.getElementById("file-size");
+        const removeFileBtn = document.getElementById("remove-file-btn");
+        const uploadBtn = document.getElementById("upload-btn");
+        const progressContainer = document.getElementById("progress-container");
+        const progressBar = document.getElementById("progress-bar");
+        const progressPct = document.getElementById("progress-pct");
+        const successBox = document.getElementById("upload-success");
+        const successText = document.getElementById("success-text");
+        const errorBox = document.getElementById("upload-error");
+        const errorText = document.getElementById("error-text");
+
+        let selectedFile = null;
+
+        // ── Helpers ───────────────────────────────────────────────────────────
+        function formatBytes(bytes) {
+            if (bytes < 1024) return bytes + " B";
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+            return (bytes / 1048576).toFixed(1) + " MB";
+        }
+
+        function showError(msg) {
+            errorText.textContent = msg;
+            errorBox.classList.remove("hidden");
+            successBox.classList.add("hidden");
+        }
+
+        function showSuccess(msg) {
+            successText.textContent = msg;
+            successBox.classList.remove("hidden");
+            errorBox.classList.add("hidden");
+        }
+
+        function hideMessages() {
+            errorBox.classList.add("hidden");
+            successBox.classList.add("hidden");
+        }
+
+        /** Convert a File to a base64 data-URL string */
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function setFile(file) {
+            if (!file) return;
+            if (file.type !== "application/pdf") {
+                showError("Only PDF files are allowed.");
+                return;
+            }
+            if (file.size > MAX_FILE_SIZE) {
+                showError(`File exceeds the ${formatBytes(MAX_FILE_SIZE)} size limit (Firestore free tier).`);
+                return;
+            }
+            hideMessages();
+            selectedFile = file;
+            fileNameEl.textContent = file.name;
+            fileSizeEl.textContent = formatBytes(file.size);
+            fileInfo.classList.remove("hidden");
+            uploadBtn.disabled = false;
+        }
+
+        function clearFile() {
+            selectedFile = null;
+            fileInput.value = "";
+            fileInfo.classList.add("hidden");
+            uploadBtn.disabled = true;
+            progressContainer.classList.add("hidden");
+            progressBar.style.width = "0%";
+            progressPct.textContent = "0%";
+        }
+
+        // ── Browse button ─────────────────────────────────────────────────────
+        browseBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            fileInput.click();
+        });
+        dropZone.addEventListener("click", () => fileInput.click());
+        fileInput.addEventListener("change", () => {
+            if (fileInput.files.length) setFile(fileInput.files[0]);
+        });
+        removeFileBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            clearFile();
+        });
+
+        // ── Drag & drop ──────────────────────────────────────────────────────
+        dropZone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropZone.classList.add("border-primary", "bg-primary-fixed");
+        });
+        dropZone.addEventListener("dragleave", () => {
+            dropZone.classList.remove("border-primary", "bg-primary-fixed");
+        });
+        dropZone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropZone.classList.remove("border-primary", "bg-primary-fixed");
+            if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]);
+        });
+
+        // ── Upload handler (Firestore-only, no Storage) ───────────────────────
+        uploadBtn.addEventListener("click", async () => {
+            hideMessages();
+
+            const patientId = patientIdInput.value.trim();
+            if (!patientId) {
+                showError("Please enter a Patient ID first.");
+                return;
+            }
+            if (!selectedFile) {
+                showError("Please select a PDF file to upload.");
+                return;
+            }
+
+            // Check if patient document exists
+            const patientDocRef = doc(db, "Patients", patientId);
+            try {
+                const patientSnap = await getDoc(patientDocRef);
+                if (!patientSnap.exists()) {
+                    showError(`No patient found with ID "${patientId}". Please check the ID.`);
+                    return;
+                }
+            } catch (err) {
+                console.error("Error checking patient:", err);
+                showError("Could not verify Patient ID. Please try again.");
+                return;
+            }
+
+            // Disable controls during upload
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = `<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Uploading…`;
+            progressContainer.classList.remove("hidden");
+            progressBar.style.width = "30%";
+            progressPct.textContent = "30%";
+
+            try {
+                // Convert PDF to base64
+                const base64Data = await fileToBase64(selectedFile);
+                progressBar.style.width = "60%";
+                progressPct.textContent = "60%";
+
+                // Store as a new document in the reports subcollection
+                // Path: Patients/{patientId}/reports/{auto-generated-id}
+                const reportType = document.getElementById("report-type").value.trim();
+                const reportsRef = collection(db, "Patients", patientId, "reports");
+                await addDoc(reportsRef, {
+                    fileName: selectedFile.name,
+                    reportType: reportType || "General",
+                    fileData: base64Data,
+                    uploadedAt: new Date().toISOString(),
+                    size: selectedFile.size
+                });
+
+                progressBar.style.width = "100%";
+                progressPct.textContent = "100%";
+
+                showSuccess(`"${selectedFile.name}" uploaded successfully for patient ${patientId}.`);
+                clearFile();
+                document.getElementById("report-type").value = "";
+            } catch (err) {
+                console.error("Upload error:", err);
+                showError("Upload failed: " + err.message);
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = `<span class="material-symbols-outlined text-[20px]">cloud_upload</span> Upload Report`;
+            }
+        });
+
+        // ── Medical Conditions Update Logic ────────────────────────────────────
+        const medPatientIdInput = document.getElementById("med-patient-id");
+        const fetchMedBtn = document.getElementById("fetch-med-btn");
+        const currentMedInfo = document.getElementById("current-med-info");
+        const currentMedText = document.getElementById("current-med-text");
+        const medChangeToggle = document.getElementById("med-change-toggle");
+        const medYesBtn = document.getElementById("med-yes-btn");
+        const medNoBtn = document.getElementById("med-no-btn");
+        const medUpdateFields = document.getElementById("med-update-fields");
+        const medNewConditions = document.getElementById("med-new-conditions");
+        const saveMedBtn = document.getElementById("save-med-btn");
+        const medSuccess = document.getElementById("med-success");
+        const medSuccessText = document.getElementById("med-success-text");
+        const medError = document.getElementById("med-error");
+        const medErrorText = document.getElementById("med-error-text");
+
+        function showMedError(msg) {
+            medErrorText.textContent = msg;
+            medError.classList.remove("hidden");
+            medSuccess.classList.add("hidden");
+        }
+
+        function showMedSuccess(msg) {
+            medSuccessText.textContent = msg;
+            medSuccess.classList.remove("hidden");
+            medError.classList.add("hidden");
+        }
+
+        function hideMedMessages() {
+            medError.classList.add("hidden");
+            medSuccess.classList.add("hidden");
+        }
+
+        function resetMedSection() {
+            currentMedInfo.classList.add("hidden");
+            medChangeToggle.classList.add("hidden");
+            medUpdateFields.classList.add("hidden");
+            medYesBtn.classList.remove("bg-primary", "text-on-primary");
+            medNoBtn.classList.remove("bg-primary", "text-on-primary");
+            medNewConditions.value = "";
+            hideMedMessages();
+        }
+
+        // Fetch patient info and show current medical conditions
+        fetchMedBtn.addEventListener("click", async () => {
+            const uid = medPatientIdInput.value.trim();
+            if (!uid) { showMedError("Please enter a Patient UID."); return; }
+
+            resetMedSection();
+            fetchMedBtn.disabled = true;
+            fetchMedBtn.innerHTML = `<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Fetching…`;
+
+            try {
+                const patientDocRef = doc(db, "Patients", uid);
+                const patientSnap = await getDoc(patientDocRef);
+                if (!patientSnap.exists()) {
+                    showMedError(`No patient found with UID "${uid}". Please check the ID.`);
+                    return;
+                }
+
+                const data = patientSnap.data();
+                const currentConditions = data.medicalSummary?.allergies || "None recorded";
+                currentMedText.textContent = currentConditions;
+                currentMedInfo.classList.remove("hidden");
+                medChangeToggle.classList.remove("hidden");
+            } catch (err) {
+                console.error("Error fetching patient:", err);
+                showMedError("Could not fetch patient data. Please try again.");
+            } finally {
+                fetchMedBtn.disabled = false;
+                fetchMedBtn.innerHTML = `<span class="material-symbols-outlined text-[20px]">search</span> Fetch Patient Info`;
+            }
+        });
+
+        // Yes button — show textarea
+        medYesBtn.addEventListener("click", () => {
+            medYesBtn.classList.add("bg-primary", "text-on-primary");
+            medNoBtn.classList.remove("bg-primary", "text-on-primary");
+            medUpdateFields.classList.remove("hidden");
+            hideMedMessages();
+        });
+
+        // No button — hide textarea
+        medNoBtn.addEventListener("click", () => {
+            medNoBtn.classList.add("bg-primary", "text-on-primary");
+            medYesBtn.classList.remove("bg-primary", "text-on-primary");
+            medUpdateFields.classList.add("hidden");
+            hideMedMessages();
+        });
+
+        // Save updated medical conditions to Firebase
+        saveMedBtn.addEventListener("click", async () => {
+            const uid = medPatientIdInput.value.trim();
+            const newConditions = medNewConditions.value.trim();
+            if (!uid) { showMedError("Patient UID is missing."); return; }
+            if (!newConditions) { showMedError("Please enter the updated medical conditions."); return; }
+
+            hideMedMessages();
+            saveMedBtn.disabled = true;
+            saveMedBtn.innerHTML = `<span class="material-symbols-outlined text-[20px] animate-spin">progress_activity</span> Saving…`;
+
+            try {
+                const patientDocRef = doc(db, "Patients", uid);
+                await updateDoc(patientDocRef, {
+                    "medicalSummary.allergies": newConditions
+                });
+
+                // Update the displayed current conditions
+                currentMedText.textContent = newConditions;
+                medNewConditions.value = "";
+                medUpdateFields.classList.add("hidden");
+                medYesBtn.classList.remove("bg-primary", "text-on-primary");
+                medNoBtn.classList.remove("bg-primary", "text-on-primary");
+
+                showMedSuccess(`Medical conditions updated successfully for patient ${uid}.`);
+            } catch (err) {
+                console.error("Update error:", err);
+                showMedError("Failed to update: " + err.message);
+            } finally {
+                saveMedBtn.disabled = false;
+                saveMedBtn.innerHTML = `<span class="material-symbols-outlined text-[20px]">save</span> Update Medical Info`;
+            }
+        });
+
+        // ── Log Out Logic ─────────────────────────────────────────────────────
+        const logoutBtn = document.getElementById("logout-btn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", async (e) => {
+                e.preventDefault();
+                try {
+                    await signOut(auth);
+                } catch (error) {
+                    console.error("Error signing out:", error);
+                    alert("Failed to log out. Please try again.");
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
