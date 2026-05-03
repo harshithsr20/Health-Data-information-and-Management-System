@@ -131,13 +131,7 @@
                 <div class="font-label-sm text-label-sm text-secondary">Clinical Precision v1.0</div>
             </div>
         </div>
-        <div class="px-6 mb-6">
-            <button
-                class="w-full bg-primary hover:bg-surface-tint text-on-primary font-label-sm text-label-sm py-3 rounded-lg flex items-center justify-center gap-2 transition-colors">
-                <span class="material-symbols-outlined">add</span>
-                New Record
-            </button>
-        </div>
+
         <div class="flex-1 overflow-y-auto">
             <ul class="flex flex-col gap-1">
                 <li>
@@ -165,7 +159,7 @@
         <div class="mt-auto border-t border-outline-variant pt-4">
             <ul class="flex flex-col gap-1">
                 <li>
-                    <a class="flex items-center gap-3 px-6 py-4 text-secondary hover:text-on-surface hover:bg-surface-container transition-all cursor-pointer duration-200 ease-in-out"
+                    <a id="logout-btn" class="flex items-center gap-3 px-6 py-4 text-secondary hover:text-on-surface hover:bg-surface-container transition-all cursor-pointer duration-200 ease-in-out"
                         href="#">
                         <span class="material-symbols-outlined">logout</span>
                         <span class="font-label-sm text-label-sm">Log Out</span>
@@ -234,6 +228,18 @@
                             <button id="remove-file-btn" type="button" class="text-error hover:text-on-error-container transition-colors">
                                 <span class="material-symbols-outlined">close</span>
                             </button>
+                        </div>
+                        <!-- Report Type input -->
+                        <div class="mt-4">
+                            <label class="block font-label-sm text-label-sm text-secondary mb-2 uppercase tracking-wider"
+                                for="report-type">Report Type</label>
+                            <div class="relative">
+                                <span
+                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">lab_profile</span>
+                                <input
+                                    class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                                    id="report-type" placeholder="e.g. Blood Test, X-Ray, MRI Scan, ECG" type="text" />
+                            </div>
                         </div>
                         <!-- Progress bar -->
                         <div id="progress-container" class="hidden mt-4">
@@ -347,9 +353,18 @@
     </div>
 
     <script type="module">
-        // ── Firebase imports (Firestore only — no Storage needed) ─────────────
-        import { db } from "../firebaseConfig.js";
+        // ── Firebase imports ──────────────────────────────────────────────────
+        import { db, auth } from "../firebaseConfig.js";
         import { doc, getDoc, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+        // ── Auth Check ────────────────────────────────────────────────────────
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // Not logged in, redirect to doctor login
+                window.location.href = "doc_login.html";
+            }
+        });
 
         // Max file size: ~700 KB raw → ~933 KB base64, within Firestore 1 MiB doc limit
         const MAX_FILE_SIZE = 700 * 1024;
@@ -507,9 +522,11 @@
 
                 // Store as a new document in the reports subcollection
                 // Path: Patients/{patientId}/reports/{auto-generated-id}
+                const reportType = document.getElementById("report-type").value.trim();
                 const reportsRef = collection(db, "Patients", patientId, "reports");
                 await addDoc(reportsRef, {
                     fileName: selectedFile.name,
+                    reportType: reportType || "General",
                     fileData: base64Data,
                     uploadedAt: new Date().toISOString(),
                     size: selectedFile.size
@@ -520,6 +537,7 @@
 
                 showSuccess(`"${selectedFile.name}" uploaded successfully for patient ${patientId}.`);
                 clearFile();
+                document.getElementById("report-type").value = "";
             } catch (err) {
                 console.error("Upload error:", err);
                 showError("Upload failed: " + err.message);
@@ -652,6 +670,20 @@
                 saveMedBtn.innerHTML = `<span class="material-symbols-outlined text-[20px]">save</span> Update Medical Info`;
             }
         });
+
+        // ── Log Out Logic ─────────────────────────────────────────────────────
+        const logoutBtn = document.getElementById("logout-btn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", async (e) => {
+                e.preventDefault();
+                try {
+                    await signOut(auth);
+                } catch (error) {
+                    console.error("Error signing out:", error);
+                    alert("Failed to log out. Please try again.");
+                }
+            });
+        }
     </script>
 </body>
 

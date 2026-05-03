@@ -91,8 +91,79 @@ Format the report in clean Markdown with clear headings and bullet points.`;
     }
 });
 
+// ── POST /api/analyze-pdf-text ───────────────────────────────────────────────
+// Receives extracted text from a patient's PDF report,
+// sends it to Groq API to extract key medical details, and returns the AI summary.
+app.post("/api/analyze-pdf-text", async (req, res) => {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
+        return res.status(500).json({ error: "Groq API key is not configured." });
+    }
+
+    const { reportText } = req.body;
+    if (!reportText) {
+        return res.status(400).json({ error: "Missing reportText in request body." });
+    }
+
+    const prompt = `You are a medical data analyst. I am providing you with text extracted from a patient's diagnostic or lab report. Please extract the key clinical details and present them in a clear, easily readable Markdown format.
+
+**Important:** Do NOT invent data, diagnose, or prescribe. Just extract the key findings.
+
+Extracted Report Text:
+${reportText}
+
+Please provide:
+1. **Report Overview** — Likely type of report (e.g., Blood test, MRI, Discharge summary) and any visible dates.
+2. **Key Findings / Abnormalities** — Highlight any values that appear out of range, abnormal findings, or significant clinical observations.
+3. **Conclusions / Impressions** — Any summary or conclusion explicitly stated in the report.
+
+Format in clean Markdown using headings and bullet points.`;
+
+    try {
+        const groqUrl = "https://api.groq.com/openai/v1/chat/completions";
+
+        const groqResponse = await fetch(groqUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: "llama-3.3-70b-versatile",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are a clinical data extraction assistant. You summarize medical reports accurately without diagnosing."
+                    },
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ],
+                temperature: 0.3,
+                max_tokens: 2048,
+            }),
+        });
+
+        if (!groqResponse.ok) {
+            const errorBody = await groqResponse.text();
+            console.error("Groq API error:", groqResponse.status, errorBody);
+            return res.status(502).json({ error: `Groq API returned ${groqResponse.status}.` });
+        }
+
+        const groqResult = await groqResponse.json();
+        const text = groqResult?.choices?.[0]?.message?.content || "No details could be extracted.";
+
+        return res.json({ summary: text });
+    } catch (err) {
+        console.error("Server error during Groq call:", err);
+        return res.status(500).json({ error: "Internal server error: " + err.message });
+    }
+});
+
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
     console.log(`✅  AI proxy server running at http://localhost:${PORT}`);
-    console.log(`   POST /api/analyze  →  Groq analysis endpoint`);
+    console.log(`   POST /api/analyze  →  Groq patient history analysis endpoint`);
+    console.log(`   POST /api/analyze-pdf-text  →  Groq PDF report analysis endpoint`);
 });

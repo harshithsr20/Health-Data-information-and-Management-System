@@ -7,6 +7,11 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>ClinicalConnect - View Patient Reports</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // Set the workerSrc for pdf.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
@@ -186,7 +191,7 @@
         <div class="mt-auto border-t border-outline-variant pt-4">
             <ul class="flex flex-col gap-1">
                 <li>
-                    <a class="flex items-center gap-3 px-6 py-4 text-secondary hover:text-on-surface hover:bg-surface-container transition-all cursor-pointer duration-200 ease-in-out"
+                    <a id="logout-btn" class="flex items-center gap-3 px-6 py-4 text-secondary hover:text-on-surface hover:bg-surface-container transition-all cursor-pointer duration-200 ease-in-out"
                         href="#">
                         <span class="material-symbols-outlined">logout</span>
                         <span class="font-label-sm text-label-sm">Log Out</span>
@@ -234,9 +239,11 @@
                     <!-- Reports List -->
                     <div class="lg:col-span-2">
                         <div id="reports-container" class="hidden">
-                            <h2 class="font-h2 text-h2 text-on-surface mb-stack-sm pb-2 border-b border-outline-variant">Reports</h2>
-                            <div id="reports-list" class="space-y-4">
-                                <!-- Reports will be inserted here -->
+                            <h2 class="font-h2 text-h2 text-on-surface mb-stack-sm">Recent Reports</h2>
+                            <div class="rounded-xl border border-outline-variant overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
+                                <div id="reports-list">
+                                    <!-- Reports will be inserted here -->
+                                </div>
                             </div>
                         </div>
                         <!-- Status messages -->
@@ -327,8 +334,17 @@
 
     <script type="module">
         // ── Firebase imports ──────────────────────────────────────────────────
-        import { db } from "../firebaseConfig.js";
+        import { db, auth } from "../firebaseConfig.js";
         import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+        // ── Auth Check ────────────────────────────────────────────────────────
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // Not logged in, redirect to doctor login
+                window.location.href = "doc_login.html";
+            }
+        });
 
         // ── DOM refs ──────────────────────────────────────────────────────────
         const patientIdInput = document.getElementById("patient-id");
@@ -385,6 +401,33 @@
             window.open(url, "_blank");
         }
 
+        // ── Report icon/color mapping ─────────────────────────────────────────
+        function getReportMeta(reportType) {
+            const t = (reportType || "").toLowerCase();
+            if (t.includes("blood") || t.includes("cbc") || t.includes("hemoglobin"))
+                return { icon: "bloodtype", bg: "bg-red-50", text: "text-red-600" };
+            if (t.includes("x-ray") || t.includes("xray") || t.includes("radiology"))
+                return { icon: "monitor", bg: "bg-green-50", text: "text-green-600" };
+            if (t.includes("mri") || t.includes("ct") || t.includes("scan"))
+                return { icon: "radiology", bg: "bg-purple-50", text: "text-purple-600" };
+            if (t.includes("ecg") || t.includes("cardio") || t.includes("heart"))
+                return { icon: "ecg_heart", bg: "bg-pink-50", text: "text-pink-600" };
+            if (t.includes("lipid") || t.includes("cholesterol"))
+                return { icon: "experiment", bg: "bg-amber-50", text: "text-amber-600" };
+            if (t.includes("urine") || t.includes("kidney") || t.includes("renal"))
+                return { icon: "water_drop", bg: "bg-cyan-50", text: "text-cyan-600" };
+            if (t.includes("eye") || t.includes("ophthal") || t.includes("vision"))
+                return { icon: "visibility", bg: "bg-indigo-50", text: "text-indigo-600" };
+            return { icon: "clinical_notes", bg: "bg-blue-50", text: "text-blue-600" };
+        }
+
+        function formatUploadDate(dateString) {
+            const d = new Date(dateString);
+            const day = d.getDate();
+            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            return `${day} ${months[d.getMonth()]} ${d.getFullYear()}`;
+        }
+
         function showReports(reports) {
             reportsContainer.classList.remove("hidden");
             noReports.classList.add("hidden");
@@ -392,30 +435,159 @@
             loading.classList.add("hidden");
 
             reportsList.innerHTML = "";
-            reports.forEach(report => {
-                const reportDiv = document.createElement("div");
-                reportDiv.className = "flex items-center justify-between p-4 bg-surface-container-lowest rounded-lg border border-outline-variant";
+            reports.forEach((report, index) => {
+                const reportType = report.reportType || "General";
+                const meta = getReportMeta(reportType);
 
+                // Wrapper
+                const wrapperDiv = document.createElement("div");
+                wrapperDiv.className = "flex flex-col";
+
+                // Row card
+                const reportDiv = document.createElement("div");
+                reportDiv.className = "flex items-start gap-4 px-5 py-5 bg-surface-container-lowest border-b border-outline-variant/60 hover:bg-surface-container-low/40 transition-colors";
+
+                // — Left: Icon circle
+                const iconWrap = document.createElement("div");
+                iconWrap.className = `w-12 h-12 rounded-xl ${meta.bg} flex items-center justify-center flex-shrink-0 mt-0.5`;
+                iconWrap.innerHTML = `<span class="material-symbols-outlined ${meta.text} text-[24px]" style="font-variation-settings: 'FILL' 1;">${meta.icon}</span>`;
+
+                // — Middle: Info
                 const infoDiv = document.createElement("div");
-                infoDiv.className = "flex items-center gap-3";
+                infoDiv.className = "flex-1 min-w-0";
                 infoDiv.innerHTML = `
-                        <span class="material-symbols-outlined text-primary text-[28px]">description</span>
-                        <div>
-                            <p class="font-label-sm text-label-sm text-on-surface">${report.fileName}</p>
-                            <p class="font-label-sm text-label-sm text-secondary">Uploaded: ${formatDate(report.uploadedAt)} | Size: ${formatBytes(report.size)}</p>
-                        </div>
-                    `;
+                    <p class="font-semibold text-[15px] text-on-surface leading-snug">${reportType}</p>
+                    <p class="text-[13px] text-secondary mt-0.5">${report.fileName} · ${formatBytes(report.size)}</p>
+                `;
+
+                // — Right: Date + actions
+                const rightDiv = document.createElement("div");
+                rightDiv.className = "flex flex-col items-end gap-2 flex-shrink-0";
+
+                // Date
+                const dateEl = document.createElement("span");
+                dateEl.className = "text-[13px] text-secondary whitespace-nowrap";
+                dateEl.textContent = formatUploadDate(report.uploadedAt);
+
+                // Action buttons row
+                const btnRow = document.createElement("div");
+                btnRow.className = "flex items-center gap-2";
+
+                const analyzeButton = document.createElement("button");
+                analyzeButton.type = "button";
+                analyzeButton.className = "px-3 py-1.5 bg-surface border border-outline-variant rounded-lg text-[12px] font-semibold text-secondary hover:bg-surface-container hover:text-on-surface transition-colors flex items-center gap-1.5";
+                analyzeButton.innerHTML = `<span class="material-symbols-outlined text-[14px]">auto_awesome</span> Analyze`;
 
                 const viewButton = document.createElement("button");
                 viewButton.type = "button";
-                viewButton.className = "px-4 py-2 bg-primary hover:bg-surface-tint text-on-primary font-label-sm text-label-sm rounded-lg transition-colors flex items-center gap-2";
-                viewButton.innerHTML = `<span class="material-symbols-outlined text-[16px]">visibility</span> View PDF`;
+                viewButton.className = "px-3 py-1.5 bg-surface border border-outline-variant rounded-lg text-[12px] font-semibold text-secondary hover:bg-surface-container hover:text-on-surface transition-colors flex items-center gap-1.5";
+                viewButton.innerHTML = `<span class="material-symbols-outlined text-[14px]">download</span> PDF`;
                 viewButton.addEventListener("click", () => openPdf(report.fileData));
 
+                // AI analysis container
+                const aiResultDiv = document.createElement("div");
+                aiResultDiv.id = `report-analysis-${index}`;
+                aiResultDiv.className = "hidden p-5 bg-surface-container-low border-b border-outline-variant/60";
+                aiResultDiv.innerHTML = `
+                    <div class="flex items-center gap-2 mb-3 pb-2 border-b border-outline-variant">
+                        <span class="material-symbols-outlined text-primary text-[20px]">insights</span>
+                        <h4 class="font-h2 text-h2 text-on-surface text-[16px]">AI Report Summary</h4>
+                        <span class="ml-auto px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full bg-primary-fixed text-primary">Powered by Groq</span>
+                    </div>
+                    <div class="ai-report-content ai-report font-body-md text-body-md text-on-surface"></div>
+                `;
+
+                analyzeButton.addEventListener("click", () => extractAndAnalyzePdf(report.fileData, aiResultDiv, analyzeButton));
+
+                btnRow.appendChild(analyzeButton);
+                btnRow.appendChild(viewButton);
+                rightDiv.appendChild(dateEl);
+                rightDiv.appendChild(btnRow);
+
+                reportDiv.appendChild(iconWrap);
                 reportDiv.appendChild(infoDiv);
-                reportDiv.appendChild(viewButton);
-                reportsList.appendChild(reportDiv);
+                reportDiv.appendChild(rightDiv);
+
+                wrapperDiv.appendChild(reportDiv);
+                wrapperDiv.appendChild(aiResultDiv);
+
+                reportsList.appendChild(wrapperDiv);
             });
+        }
+
+        // ── PDF Extraction & Groq Analysis ────────────────────────────────────
+        async function extractAndAnalyzePdf(base64Data, resultDiv, btn) {
+            const contentDiv = resultDiv.querySelector('.ai-report-content');
+            
+            // UI Loading state
+            resultDiv.classList.remove("hidden");
+            contentDiv.innerHTML = `
+                <div class="flex items-center gap-3 text-primary p-4 analyzing-glow rounded-lg bg-primary-fixed/20 border border-primary/20">
+                    <span class="material-symbols-outlined animate-spin">progress_activity</span>
+                    <p class="font-label-sm font-semibold">Extracting text and generating AI summary...</p>
+                </div>
+            `;
+            btn.disabled = true;
+            btn.classList.add("opacity-50", "cursor-not-allowed");
+
+            try {
+                // 1. Extract base64 part
+                const base64Str = base64Data.split(',')[1];
+                const binaryString = atob(base64Str);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+
+                // 2. Load PDF using pdf.js
+                const loadingTask = pdfjsLib.getDocument({ data: bytes });
+                const pdf = await loadingTask.promise;
+                
+                let extractedText = "";
+                const maxPages = Math.min(pdf.numPages, 5); // Limit to first 5 pages to save tokens
+                
+                // 3. Extract text from each page
+                for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
+                    const page = await pdf.getPage(pageNum);
+                    const textContent = await page.getTextContent();
+                    const pageText = textContent.items.map(item => item.str).join(" ");
+                    extractedText += pageText + "\n\n";
+                }
+
+                if (!extractedText.trim()) {
+                    throw new Error("Could not extract any readable text from this PDF.");
+                }
+
+                // 4. Send extracted text to our Groq backend endpoint
+                const PDF_AI_URL = "http://localhost:3001/api/analyze-pdf-text";
+                const response = await fetch(PDF_AI_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ reportText: extractedText }),
+                });
+
+                if (!response.ok) {
+                    const errBody = await response.json().catch(() => ({}));
+                    throw new Error(errBody.error || `Server returned ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                // 5. Render result
+                contentDiv.innerHTML = markdownToHtml(result.summary);
+
+            } catch (err) {
+                console.error("PDF Analysis Error:", err);
+                contentDiv.innerHTML = `
+                    <div class="flex items-center gap-2 text-red-700 bg-red-50 p-3 rounded-lg border border-red-200">
+                        <span class="material-symbols-outlined">error</span>
+                        <p class="font-body-md">${err.message || "Failed to analyze PDF."}</p>
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove("opacity-50", "cursor-not-allowed");
+            }
         }
 
         function showLoading() {
@@ -581,6 +753,20 @@
                 aiAnalyzeBtn.innerHTML = `<span class="material-symbols-outlined text-[20px]">auto_awesome</span> Generate AI Report`;
             }
         });
+
+        // ── Log Out Logic ─────────────────────────────────────────────────────
+        const logoutBtn = document.getElementById("logout-btn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", async (e) => {
+                e.preventDefault();
+                try {
+                    await signOut(auth);
+                } catch (error) {
+                    console.error("Error signing out:", error);
+                    alert("Failed to log out. Please try again.");
+                }
+            });
+        }
     </script>
 </body>
 
