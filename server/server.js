@@ -160,10 +160,91 @@ Format in clean Markdown using headings and bullet points.`;
         return res.status(500).json({ error: "Internal server error: " + err.message });
     }
 });
+// ── POST /api/patient-overview ───────────────────────────────────────────────
+// Receives patient data from Firestore, sends it to Groq API,
+// and returns a concise AI-generated patient overview for the dashboard.
+app.post("/api/patient-overview", async (req, res) => {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
+        return res.status(500).json({ error: "Groq API key is not configured." });
+    }
+
+    const { patientData } = req.body;
+    if (!patientData) {
+        return res.status(400).json({ error: "Missing patientData in request body." });
+    }
+
+    const prompt = `You are a medical data assistant. Given the following patient record from a hospital database, generate a concise Patient Overview card.
+
+Patient Data:
+${JSON.stringify(patientData, null, 2)}
+
+Generate a response in this EXACT format (use Markdown):
+
+## Patient Profile
+- **Name:** [full name]
+- **Age:** [calculate from DOB if available, otherwise say "Not available"]
+- **Gender:** [gender]
+- **Blood Type:** [bloodType]
+- **Height:** [height] cm
+- **Weight:** [weight] kg
+- **BMI:** [calculate BMI from height and weight if both available: weight(kg) / (height(m))². Round to 1 decimal]
+
+## Quick Health Summary
+Write 2-3 sentences summarising the patient's overall health profile based on the available data — mention any recorded conditions, medications, or hospitalizations. If data is limited, say so briefly.
+
+**Important rules:**
+- Only use data that actually exists in the record. Do NOT invent data.
+- Do NOT include contact info, address, or ID numbers.
+- Do NOT diagnose or prescribe. Just summarize what's on record.
+- Keep it brief and professional.`;
+
+    try {
+        const groqUrl = "https://api.groq.com/openai/v1/chat/completions";
+
+        const groqResponse = await fetch(groqUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: "llama-3.3-70b-versatile",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are a concise medical data assistant. You present patient information clearly in Markdown. You never diagnose or prescribe."
+                    },
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ],
+                temperature: 0.2,
+                max_tokens: 1024,
+            }),
+        });
+
+        if (!groqResponse.ok) {
+            const errorBody = await groqResponse.text();
+            console.error("Groq API error:", groqResponse.status, errorBody);
+            return res.status(502).json({ error: `Groq API returned ${groqResponse.status}.` });
+        }
+
+        const groqResult = await groqResponse.json();
+        const text = groqResult?.choices?.[0]?.message?.content || "No overview could be generated.";
+
+        return res.json({ overview: text });
+    } catch (err) {
+        console.error("Server error during Groq call:", err);
+        return res.status(500).json({ error: "Internal server error: " + err.message });
+    }
+});
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
     console.log(`✅  AI proxy server running at http://localhost:${PORT}`);
-    console.log(`   POST /api/analyze  →  Groq patient history analysis endpoint`);
-    console.log(`   POST /api/analyze-pdf-text  →  Groq PDF report analysis endpoint`);
+    console.log(`   POST /api/analyze           →  Groq patient history analysis`);
+    console.log(`   POST /api/analyze-pdf-text   →  Groq PDF report analysis`);
+    console.log(`   POST /api/patient-overview   →  Groq patient overview for dashboard`);
 });
