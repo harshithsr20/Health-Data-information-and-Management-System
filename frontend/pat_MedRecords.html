@@ -6,6 +6,10 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>HDIMS - Medical Records</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Public+Sans:wght@600;700&display=swap"
         rel="stylesheet" />
@@ -196,6 +200,26 @@
             opacity: 1;
             pointer-events: all;
         }
+
+        /* ── AI Summary Styles ── */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 8px rgba(15, 82, 186, 0.15); }
+            50% { box-shadow: 0 0 20px rgba(15, 82, 186, 0.35); }
+        }
+        .analyzing-glow {
+            animation: pulse-glow 1.5s ease-in-out infinite;
+        }
+
+        .ai-summary h1 { font-size: 20px; font-weight: 700; margin: 14px 0 6px; color: #0d1c2e; }
+        .ai-summary h2 { font-size: 17px; font-weight: 600; margin: 12px 0 6px; color: #003c90; border-bottom: 1px solid #c3c6d5; padding-bottom: 4px; }
+        .ai-summary h3 { font-size: 15px; font-weight: 600; margin: 10px 0 4px; color: #0d1c2e; }
+        .ai-summary p  { margin: 4px 0 8px; line-height: 1.7; }
+        .ai-summary ul { list-style: disc; padding-left: 24px; margin: 4px 0 10px; }
+        .ai-summary ol { list-style: decimal; padding-left: 24px; margin: 4px 0 10px; }
+        .ai-summary li { margin-bottom: 4px; line-height: 1.6; }
+        .ai-summary strong { font-weight: 600; }
+        .ai-summary hr { border: none; border-top: 1px solid #c3c6d5; margin: 14px 0; }
+        .ai-summary code { background: #eff4ff; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
     </style>
 </head>
 
@@ -290,159 +314,61 @@
             </div>
         </div>
 
-        <!-- Records list -->
-        <div class="grid grid-cols-1 gap-4">
-
-            <!-- Record 1 -->
-            <div
-                class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-primary-fixed-dim hover:shadow-md transition-all group">
+        <!-- Loading State -->
+        <div id="reports-loading" class="grid grid-cols-1 gap-4">
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm animate-pulse">
                 <div class="flex items-start gap-4">
-                    <div
-                        class="h-14 w-14 rounded-lg bg-primary-fixed text-primary flex items-center justify-center flex-shrink-0">
-                        <span class="material-symbols-outlined text-3xl">description</span>
+                    <div class="h-14 w-14 rounded-lg bg-surface-container-low flex-shrink-0"></div>
+                    <div class="flex-1 space-y-3 pt-1">
+                        <div class="h-4 bg-surface-container-low rounded w-1/4"></div>
+                        <div class="h-5 bg-surface-container-low rounded w-1/2"></div>
+                        <div class="h-3 bg-surface-container-low rounded w-1/3"></div>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span
-                                class="text-label-sm bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-sm uppercase text-xs font-semibold tracking-wider">LAB
-                                REPORT</span>
-                            <span class="text-sm text-outline">•</span>
-                            <span class="text-sm text-on-surface-variant"></span>
-                        </div>
-                        <h3 class="text-xl font-semibold text-on-surface mb-1"></h3>
-                        <p class="text-sm text-on-surface-variant flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm">person</span>
-                        </p>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between md:justify-end gap-12">
-                    <div class="flex flex-col items-end">
-                        <span class="text-xs text-outline mb-1 uppercase tracking-wider font-semibold">Format</span>
-                        <div class="flex items-center gap-1 text-on-surface text-sm font-medium">
-                            <span class="material-symbols-outlined text-error">picture_as_pdf</span>
-                        </div>
-                    </div>
-                    <button
-                        class="bg-surface-container-lowest border-2 border-primary text-primary px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary hover:text-on-primary transition-all flex items-center gap-2">
-                        View <span class="material-symbols-outlined text-sm">visibility</span>
-                    </button>
                 </div>
             </div>
-
-            <!-- Record 2 -->
-            <div
-                class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-primary-fixed-dim hover:shadow-md transition-all group">
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm animate-pulse">
                 <div class="flex items-start gap-4">
-                    <div
-                        class="h-14 w-14 rounded-lg bg-primary-fixed text-primary flex items-center justify-center flex-shrink-0">
-                        <span class="material-symbols-outlined text-3xl">medication</span>
+                    <div class="h-14 w-14 rounded-lg bg-surface-container-low flex-shrink-0"></div>
+                    <div class="flex-1 space-y-3 pt-1">
+                        <div class="h-4 bg-surface-container-low rounded w-1/3"></div>
+                        <div class="h-5 bg-surface-container-low rounded w-2/5"></div>
+                        <div class="h-3 bg-surface-container-low rounded w-1/4"></div>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span
-                                class="text-label-sm bg-primary-container text-on-primary-container px-2 py-0.5 rounded-sm uppercase text-xs font-semibold tracking-wider">PRESCRIPTION</span>
-                            <span class="text-sm text-outline">•</span>
-                            <span class="text-sm text-on-surface-variant"></span>
-                        </div>
-                        <h3 class="text-xl font-semibold text-on-surface mb-1"></h3>
-                        <p class="text-sm text-on-surface-variant flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm">person</span>
-                        </p>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between md:justify-end gap-12">
-                    <div class="flex flex-col items-end">
-                        <span class="text-xs text-outline mb-1 uppercase tracking-wider font-semibold">Format</span>
-                        <div class="flex items-center gap-1 text-on-surface text-sm font-medium">
-                            <span class="material-symbols-outlined text-secondary">image</span>
-                        </div>
-                    </div>
-                    <button
-                        class="bg-surface-container-lowest border-2 border-primary text-primary px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary hover:text-on-primary transition-all flex items-center gap-2">
-                        View <span class="material-symbols-outlined text-sm">visibility</span>
-                    </button>
                 </div>
             </div>
-
-            <!-- Record 3 -->
-            <div
-                class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-primary-fixed-dim hover:shadow-md transition-all group">
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm animate-pulse">
                 <div class="flex items-start gap-4">
-                    <div
-                        class="h-14 w-14 rounded-lg bg-primary-fixed text-primary flex items-center justify-center flex-shrink-0">
-                        <span class="material-symbols-outlined text-3xl">radiology</span>
+                    <div class="h-14 w-14 rounded-lg bg-surface-container-low flex-shrink-0"></div>
+                    <div class="flex-1 space-y-3 pt-1">
+                        <div class="h-4 bg-surface-container-low rounded w-1/5"></div>
+                        <div class="h-5 bg-surface-container-low rounded w-1/3"></div>
+                        <div class="h-3 bg-surface-container-low rounded w-1/4"></div>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span
-                                class="text-label-sm bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded-sm uppercase text-xs font-semibold tracking-wider">IMAGING</span>
-                            <span class="text-sm text-outline">•</span>
-                            <span class="text-sm text-on-surface-variant"></span>
-                        </div>
-                        <h3 class="text-xl font-semibold text-on-surface mb-1"></h3>
-                        <p class="text-sm text-on-surface-variant flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm">person</span>
-                        </p>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between md:justify-end gap-12">
-                    <div class="flex flex-col items-end">
-                        <span class="text-xs text-outline mb-1 uppercase tracking-wider font-semibold">Format</span>
-                        <div class="flex items-center gap-1 text-on-surface text-sm font-medium">
-                            <span class="material-symbols-outlined text-tertiary-container">draft</span>
-                        </div>
-                    </div>
-                    <button
-                        class="bg-surface-container-lowest border-2 border-primary text-primary px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary hover:text-on-primary transition-all flex items-center gap-2">
-                        View <span class="material-symbols-outlined text-sm">visibility</span>
-                    </button>
                 </div>
             </div>
-
-            <!-- Record 4 -->
-            <div
-                class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-primary-fixed-dim hover:shadow-md transition-all group">
-                <div class="flex items-start gap-4">
-                    <div
-                        class="h-14 w-14 rounded-lg bg-primary-fixed text-primary flex items-center justify-center flex-shrink-0">
-                        <span class="material-symbols-outlined text-3xl">science</span>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span
-                                class="text-label-sm bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-sm uppercase text-xs font-semibold tracking-wider">LAB
-                                REPORT</span>
-                            <span class="text-sm text-outline">•</span>
-                            <span class="text-sm text-on-surface-variant"></span>
-                        </div>
-                        <h3 class="text-xl font-semibold text-on-surface mb-1"></h3>
-                        <p class="text-sm text-on-surface-variant flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm">person</span>
-                        </p>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between md:justify-end gap-12">
-                    <div class="flex flex-col items-end">
-                        <span class="text-xs text-outline mb-1 uppercase tracking-wider font-semibold">Format</span>
-                        <div class="flex items-center gap-1 text-on-surface text-sm font-medium">
-                            <span class="material-symbols-outlined text-error">picture_as_pdf</span>
-                        </div>
-                    </div>
-                    <button
-                        class="bg-surface-container-lowest border-2 border-primary text-primary px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary hover:text-on-primary transition-all flex items-center gap-2">
-                        View <span class="material-symbols-outlined text-sm">visibility</span>
-                    </button>
-                </div>
-            </div>
-
         </div>
 
-        <!-- Empty state / end -->
-        <div
-            class="mt-12 flex flex-col items-center justify-center py-12 bg-surface-container-low rounded-xl border-2 border-dashed border-outline-variant">
-            <span class="material-symbols-outlined text-outline text-6xl mb-4 opacity-40">history_toggle_off</span>
-            <p class="text-xl font-semibold text-on-surface-variant mb-1">No more records found</p>
-            <p class="text-body-md text-outline">Adjust your filters to see documents from a different time period.</p>
+        <!-- Dynamic Reports List -->
+        <div id="reports-list" class="hidden grid grid-cols-1 gap-4">
+            <!-- Report cards will be inserted here by JavaScript -->
+        </div>
+
+        <!-- Empty state -->
+        <div id="no-reports"
+            class="hidden mt-6 flex flex-col items-center justify-center py-16 bg-surface-container-low rounded-xl border-2 border-dashed border-outline-variant">
+            <span class="material-symbols-outlined text-outline text-6xl mb-4 opacity-40">folder_off</span>
+            <p class="text-xl font-semibold text-on-surface-variant mb-1">No reports found</p>
+            <p class="text-body-md text-outline">Your medical reports will appear here once uploaded by your care team.</p>
+        </div>
+
+        <!-- Error state -->
+        <div id="fetch-error"
+            class="hidden mt-6 flex items-center gap-3 p-5 bg-red-50 border border-red-200 rounded-xl">
+            <span class="material-symbols-outlined text-error text-2xl">error</span>
+            <div>
+                <p class="text-sm font-semibold text-red-700">Failed to load reports</p>
+                <p id="error-text" class="text-sm text-red-600 mt-0.5"></p>
+            </div>
         </div>
 
     </main>
@@ -472,11 +398,27 @@
     <!-- Transition overlay -->
     <div id="transition-overlay"></div>
 
-    <script>
-        // ── Entrance animation ──
-        document.body.classList.add('page-enter');
+    <script type="module">
+        // ── Firebase imports ──────────────────────────────────────────────────
+        import { db, auth } from "../firebaseConfig.js";
+        import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-        // ── Exit animation on internal link clicks ──
+        // ── Auth Guard ────────────────────────────────────────────────────────
+        const patientUID = sessionStorage.getItem("patientUID");
+        if (!patientUID) {
+            window.location.href = "pat_login.html";
+        }
+
+        // ── DOM refs ──────────────────────────────────────────────────────────
+        const reportsLoading = document.getElementById("reports-loading");
+        const reportsList = document.getElementById("reports-list");
+        const noReports = document.getElementById("no-reports");
+        const fetchError = document.getElementById("fetch-error");
+        const errorText = document.getElementById("error-text");
+
+        // ── Entrance animation ────────────────────────────────────────────────
+        document.body.classList.add('page-enter');
         const overlay = document.getElementById('transition-overlay');
         document.querySelectorAll('a[href]').forEach(function (link) {
             const href = link.getAttribute('href');
@@ -488,10 +430,298 @@
                 setTimeout(function () { window.location.href = href; }, 240);
             });
         });
-
-        // Fade overlay out immediately on load (handles back navigation)
         window.addEventListener('pageshow', function () {
             overlay.classList.remove('active');
+        });
+
+        // ── Helpers ───────────────────────────────────────────────────────────
+        function formatBytes(bytes) {
+            if (!bytes || bytes === 0) return "—";
+            if (bytes < 1024) return bytes + " B";
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+            return (bytes / 1048576).toFixed(1) + " MB";
+        }
+
+        function formatUploadDate(dateString) {
+            if (!dateString) return "—";
+            const d = new Date(dateString);
+            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+        }
+
+        function base64ToBlob(base64Data) {
+            const parts = base64Data.split(",");
+            const mimeMatch = parts[0].match(/data:(.*);base64/);
+            const contentType = mimeMatch ? mimeMatch[1] : "application/pdf";
+            const byteString = atob(parts[1]);
+            const byteArray = new Uint8Array(byteString.length);
+            for (let i = 0; i < byteString.length; i++) {
+                byteArray[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([byteArray], { type: contentType });
+        }
+
+        function openPdf(fileData) {
+            const blob = base64ToBlob(fileData);
+            const url = URL.createObjectURL(blob);
+            window.open(url, "_blank");
+        }
+
+        // ── Report icon / color mapping (from viewPatientReports) ─────────────
+        function getReportMeta(reportType) {
+            const t = (reportType || "").toLowerCase();
+            if (t.includes("blood") || t.includes("cbc") || t.includes("hemoglobin"))
+                return { icon: "bloodtype", bg: "bg-red-50", text: "text-red-500", badge: "bg-red-100 text-red-700" };
+            if (t.includes("x-ray") || t.includes("xray") || t.includes("radiology"))
+                return { icon: "radiology", bg: "bg-green-50", text: "text-green-600", badge: "bg-green-100 text-green-700" };
+            if (t.includes("mri") || t.includes("ct") || t.includes("scan"))
+                return { icon: "radiology", bg: "bg-purple-50", text: "text-purple-500", badge: "bg-purple-100 text-purple-700" };
+            if (t.includes("ecg") || t.includes("cardio") || t.includes("heart"))
+                return { icon: "ecg_heart", bg: "bg-pink-50", text: "text-pink-500", badge: "bg-pink-100 text-pink-700" };
+            if (t.includes("lipid") || t.includes("cholesterol"))
+                return { icon: "experiment", bg: "bg-amber-50", text: "text-amber-600", badge: "bg-amber-100 text-amber-700" };
+            if (t.includes("urine") || t.includes("kidney") || t.includes("renal"))
+                return { icon: "water_drop", bg: "bg-cyan-50", text: "text-cyan-600", badge: "bg-cyan-100 text-cyan-700" };
+            if (t.includes("prescription"))
+                return { icon: "medication", bg: "bg-indigo-50", text: "text-indigo-500", badge: "bg-indigo-100 text-indigo-700" };
+            return { icon: "description", bg: "bg-primary-fixed", text: "text-primary", badge: "bg-secondary-container text-on-secondary-container" };
+        }
+
+        // ── Markdown → HTML converter ─────────────────────────────────────────
+        function markdownToHtml(md) {
+            let html = md
+                .replace(/^#### (.+)$/gm, '<h4>$1</h4>')
+                .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+                .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+                .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+                .replace(/^---$/gm, '<hr>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/^[\-\*] (.+)$/gm, '<li>$1</li>')
+                .replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+
+            html = html.replace(/(<li>.*?<\/li>\s*)+/gs, (match) => '<ul>' + match + '</ul>');
+
+            html = html.split('\n').map(line => {
+                const trimmed = line.trim();
+                if (!trimmed) return '';
+                if (trimmed.startsWith('<')) return trimmed;
+                return `<p>${trimmed}</p>`;
+            }).join('\n');
+
+            return html;
+        }
+
+        // ── PDF text extraction + AI simplification ───────────────────────────
+        async function extractAndSimplifyPdf(base64Data, resultDiv, btn) {
+            const contentDiv = resultDiv.querySelector('.ai-summary-content');
+
+            // Show loading state
+            resultDiv.classList.remove("hidden");
+            contentDiv.innerHTML = `
+                <div class="flex items-center gap-3 text-primary p-4 analyzing-glow rounded-lg bg-primary-fixed/20 border border-primary/20">
+                    <span class="material-symbols-outlined animate-spin">progress_activity</span>
+                    <div>
+                        <p class="font-semibold text-sm">Reading your report and creating a simple explanation...</p>
+                        <p class="text-xs text-on-surface-variant mt-0.5">This may take a few seconds</p>
+                    </div>
+                </div>
+            `;
+            btn.disabled = true;
+            btn.classList.add("opacity-50", "cursor-not-allowed");
+
+            try {
+                // 1. Decode base64 to bytes
+                const base64Str = base64Data.split(',')[1];
+                const binaryString = atob(base64Str);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+
+                // 2. Extract text from PDF using pdf.js
+                const loadingTask = pdfjsLib.getDocument({ data: bytes });
+                const pdf = await loadingTask.promise;
+                let extractedText = "";
+                const maxPages = Math.min(pdf.numPages, 5);
+
+                for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
+                    const page = await pdf.getPage(pageNum);
+                    const textContent = await page.getTextContent();
+                    const pageText = textContent.items.map(item => item.str).join(" ");
+                    extractedText += pageText + "\n\n";
+                }
+
+                if (!extractedText.trim()) {
+                    throw new Error("Could not read any text from this PDF. It may be a scanned image.");
+                }
+
+                // 3. Send to patient-friendly AI endpoint
+                const response = await fetch("http://localhost:3001/api/simplify-report", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ reportText: extractedText }),
+                });
+
+                if (!response.ok) {
+                    const errBody = await response.json().catch(() => ({}));
+                    throw new Error(errBody.error || `Server returned ${response.status}`);
+                }
+
+                const result = await response.json();
+                contentDiv.innerHTML = markdownToHtml(result.summary);
+
+            } catch (err) {
+                console.error("AI Simplify Error:", err);
+                contentDiv.innerHTML = `
+                    <div class="flex items-center gap-2 text-red-700 bg-red-50 p-3 rounded-lg border border-red-200">
+                        <span class="material-symbols-outlined">error</span>
+                        <p class="text-sm">${err.message || "Failed to explain this report. Please try again."}</p>
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove("opacity-50", "cursor-not-allowed");
+            }
+        }
+
+        // ── Render report cards ───────────────────────────────────────────────
+        function renderReports(reports) {
+            reportsLoading.classList.add("hidden");
+
+            if (reports.length === 0) {
+                noReports.classList.remove("hidden");
+                return;
+            }
+
+            reportsList.classList.remove("hidden");
+            reportsList.innerHTML = "";
+
+            reports.forEach((report, index) => {
+                const reportType = report.reportType || "General Report";
+                const meta = getReportMeta(reportType);
+
+                // Wrapper div for card + AI summary panel
+                const wrapper = document.createElement("div");
+                wrapper.className = "flex flex-col";
+
+                // Main card
+                const card = document.createElement("div");
+                card.className = "bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-primary-fixed-dim hover:shadow-md transition-all group";
+
+                // Left: icon + info
+                const leftDiv = document.createElement("div");
+                leftDiv.className = "flex items-start gap-4";
+                leftDiv.innerHTML = `
+                    <div class="h-14 w-14 rounded-lg ${meta.bg} flex items-center justify-center flex-shrink-0">
+                        <span class="material-symbols-outlined text-3xl ${meta.text}" style="font-variation-settings: 'FILL' 1;">${meta.icon}</span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1 flex-wrap">
+                            <span class="text-label-sm ${meta.badge} px-2 py-0.5 rounded-sm uppercase text-xs font-semibold tracking-wider">${reportType}</span>
+                            <span class="text-sm text-outline">•</span>
+                            <span class="text-sm text-on-surface-variant">${formatUploadDate(report.uploadedAt)}</span>
+                        </div>
+                        <h3 class="text-xl font-semibold text-on-surface mb-1">${report.fileName || "Untitled Report"}</h3>
+                        <p class="text-sm text-on-surface-variant flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">straighten</span>
+                            ${formatBytes(report.size)}
+                        </p>
+                    </div>
+                `;
+
+                // Right: buttons
+                const rightDiv = document.createElement("div");
+                rightDiv.className = "flex items-center flex-wrap justify-between md:justify-end gap-3";
+
+                // AI Explain button
+                const explainBtn = document.createElement("button");
+                explainBtn.className = "bg-gradient-to-r from-[#0F52BA] to-[#6366f1] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-[#0F52BA]/20 active:scale-[0.97] transition-all flex items-center gap-2";
+                explainBtn.innerHTML = `<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span> Explain in Simple Terms`;
+
+                // View PDF button
+                const viewBtn = document.createElement("button");
+                viewBtn.className = "bg-surface-container-lowest border-2 border-primary text-primary px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary hover:text-on-primary transition-all flex items-center gap-2";
+                viewBtn.innerHTML = `View PDF <span class="material-symbols-outlined text-sm">visibility</span>`;
+                viewBtn.addEventListener("click", () => openPdf(report.fileData));
+
+                // AI Summary panel (hidden by default)
+                const aiPanel = document.createElement("div");
+                aiPanel.id = `ai-summary-${index}`;
+                aiPanel.className = "hidden mt-2 rounded-xl border border-outline-variant/60 bg-surface-container-low overflow-hidden";
+                aiPanel.innerHTML = `
+                    <div class="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-primary-fixed/60 to-surface-container-low border-b border-outline-variant/40">
+                        <span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">emoji_objects</span>
+                        <h4 class="text-sm font-bold text-on-surface">Your Report Explained Simply</h4>
+                        <span class="ml-auto px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full bg-primary-fixed text-primary">AI Powered</span>
+                    </div>
+                    <div class="ai-summary-content ai-summary p-5 text-sm text-on-surface leading-relaxed"></div>
+                `;
+
+                // Wire up the explain button
+                explainBtn.addEventListener("click", () => extractAndSimplifyPdf(report.fileData, aiPanel, explainBtn));
+
+                rightDiv.appendChild(explainBtn);
+                rightDiv.appendChild(viewBtn);
+                card.appendChild(leftDiv);
+                card.appendChild(rightDiv);
+                wrapper.appendChild(card);
+                wrapper.appendChild(aiPanel);
+                reportsList.appendChild(wrapper);
+            });
+        }
+
+        // ── Show error ────────────────────────────────────────────────────────
+        function showError(msg) {
+            reportsLoading.classList.add("hidden");
+            reportsList.classList.add("hidden");
+            noReports.classList.add("hidden");
+            errorText.textContent = msg;
+            fetchError.classList.remove("hidden");
+        }
+
+        // ── Fetch reports from Firestore ──────────────────────────────────────
+        async function fetchReports() {
+            try {
+                // Verify patient document exists
+                const patientDocRef = doc(db, "Patients", patientUID);
+                const patientSnap = await getDoc(patientDocRef);
+                if (!patientSnap.exists()) {
+                    showError("Patient record not found. Please log in again.");
+                    return;
+                }
+
+                // Fetch reports sub-collection
+                const reportsRef = collection(db, "Patients", patientUID, "reports");
+                const reportsSnap = await getDocs(reportsRef);
+                const reports = [];
+                reportsSnap.forEach(docSnap => {
+                    reports.push(docSnap.data());
+                });
+
+                renderReports(reports);
+            } catch (err) {
+                console.error("Error fetching reports:", err);
+                showError("Could not load your reports. Please try again later.");
+            }
+        }
+
+        fetchReports();
+
+        // ── Sign Out ──────────────────────────────────────────────────────────
+        document.querySelectorAll("a").forEach((link) => {
+            if (link.textContent.includes("Sign Out")) {
+                link.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    signOut(auth).then(() => {
+                        sessionStorage.removeItem("patientUID");
+                        window.location.href = "pat_login.html";
+                    }).catch((error) => {
+                        console.error("Sign out error:", error);
+                    });
+                });
+            }
         });
     </script>
 </body>

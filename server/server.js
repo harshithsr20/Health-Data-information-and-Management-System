@@ -241,10 +241,87 @@ Write 2-3 sentences summarising the patient's overall health profile based on th
     }
 });
 
+// ── POST /api/simplify-report ────────────────────────────────────────────────
+// Patient-facing: receives extracted PDF text and returns a plain-language
+// explanation that any non-medical person can understand.
+app.post("/api/simplify-report", async (req, res) => {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
+        return res.status(500).json({ error: "Groq API key is not configured." });
+    }
+
+    const { reportText } = req.body;
+    if (!reportText) {
+        return res.status(400).json({ error: "Missing reportText in request body." });
+    }
+
+    const prompt = `You are a warm, friendly family doctor explaining a medical report to a patient who has NO medical background. The patient is a normal everyday person — they don't know medical terms, abbreviations, or what lab values mean.
+
+Your job is to read the following medical report text and explain it in PLAIN, SIMPLE language that anyone can understand.
+
+**Rules you MUST follow:**
+- Use everyday words. If a medical term appears (e.g., "hemoglobin", "creatinine", "WBC"), briefly explain what it is in simple words (e.g., "Hemoglobin — this is the part of your blood that carries oxygen to your body").
+- Use relatable analogies where helpful (e.g., "Think of white blood cells as your body's soldiers that fight infections").
+- Clearly state whether each result is **normal**, **slightly off**, or **needs attention**, using simple color-coded labels like ✅ Normal, ⚠️ Slightly Off, or 🔴 Needs Attention.
+- If everything looks fine, reassure the patient warmly.
+- If something needs attention, explain it gently without causing panic. Suggest they talk to their doctor for next steps.
+- Do NOT diagnose or prescribe. You are only explaining what the report says.
+- Keep your language warm, supportive, and encouraging — like a caring doctor talking to a patient face to face.
+- Use short paragraphs, bullet points, and headings for easy reading.
+- Add a brief "Bottom Line" section at the end summarizing the overall picture in 2-3 simple sentences.
+
+**Extracted Report Text:**
+${reportText}
+
+Please provide the explanation in clean Markdown with clear headings and bullet points.`;
+
+    try {
+        const groqUrl = "https://api.groq.com/openai/v1/chat/completions";
+
+        const groqResponse = await fetch(groqUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: "llama-3.3-70b-versatile",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are a kind, patient-friendly medical explainer. You translate complex medical reports into plain, everyday language that anyone can understand — even someone who has never seen a medical report before. You are warm, reassuring, and never use jargon without immediately explaining it. You never diagnose or prescribe."
+                    },
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ],
+                temperature: 0.4,
+                max_tokens: 3072,
+            }),
+        });
+
+        if (!groqResponse.ok) {
+            const errorBody = await groqResponse.text();
+            console.error("Groq API error:", groqResponse.status, errorBody);
+            return res.status(502).json({ error: `Groq API returned ${groqResponse.status}.` });
+        }
+
+        const groqResult = await groqResponse.json();
+        const text = groqResult?.choices?.[0]?.message?.content || "Could not simplify the report.";
+
+        return res.json({ summary: text });
+    } catch (err) {
+        console.error("Server error during Groq call:", err);
+        return res.status(500).json({ error: "Internal server error: " + err.message });
+    }
+});
+
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
     console.log(`✅  AI proxy server running at http://localhost:${PORT}`);
-    console.log(`   POST /api/analyze           →  Groq patient history analysis`);
-    console.log(`   POST /api/analyze-pdf-text   →  Groq PDF report analysis`);
-    console.log(`   POST /api/patient-overview   →  Groq patient overview for dashboard`);
+    console.log(`   POST /api/analyze            →  Groq patient history analysis`);
+    console.log(`   POST /api/analyze-pdf-text    →  Groq PDF report analysis`);
+    console.log(`   POST /api/patient-overview    →  Groq patient overview for dashboard`);
+    console.log(`   POST /api/simplify-report     →  Groq patient-friendly report explainer`);
 });
