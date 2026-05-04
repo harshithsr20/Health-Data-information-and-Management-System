@@ -3,13 +3,19 @@ import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/fireba
 import { signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 // ── DOM Elements ─────────────────────────────────────────────────────────────
-const greetingName       = document.getElementById("greeting-name");
-const lastUpdated        = document.getElementById("last-updated");
-const aiOverviewContent  = document.getElementById("ai-overview-content");
-const aiLoading          = document.getElementById("ai-loading");
-const regenerateBtn      = document.getElementById("regenerate-ai-btn");
-const medicationsList    = document.getElementById("medications-list");
-const careTeamList       = document.getElementById("care-team-list");
+const greetingName = document.getElementById("greeting-name");
+const lastUpdated = document.getElementById("last-updated");
+const aiOverviewContent = document.getElementById("ai-overview-content");
+const aiLoading = document.getElementById("ai-loading");
+const regenerateBtn = document.getElementById("regenerate-ai-btn");
+const medicationsList = document.getElementById("medications-list");
+const careTeamList = document.getElementById("care-team-list");
+const medRecordsLink = document.getElementById("medical-records-link");
+const mobileMedRecordsLink = document.getElementById("mobile-medical-records-link");
+const medicationsLink = document.getElementById("medications-link");
+const mobileMedicationsLink = document.getElementById("mobile-medications-link");
+const careTeamLink = document.getElementById("care-team-link");
+const changePasswordLink = document.getElementById("change-password-link");
 
 // ── Authentication Guard ─────────────────────────────────────────────────────
 const patientUID = sessionStorage.getItem("patientUID");
@@ -176,13 +182,24 @@ if (regenerateBtn) {
     });
 }
 
-// ── Load Medications (sub-collection) ────────────────────────────────────────
+// ── Load Medications (from patient document) ──────────────────────────────────
 async function loadMedications(uid) {
     try {
-        const medsRef = collection(db, "Patients", uid, "medications");
-        const medsSnap = await getDocs(medsRef);
+        const patientRef = doc(db, "Patients", uid);
+        const patientSnap = await getDoc(patientRef);
 
-        if (medsSnap.empty) {
+        if (!patientSnap.exists() || !patientSnap.data().medicalSummary || !patientSnap.data().medicalSummary.medications) {
+            medicationsList.innerHTML = `
+                <p class="text-sm text-slate-400 italic">No medications on record.</p>
+            `;
+            return;
+        }
+
+        const data = patientSnap.data();
+        const medicationsString = data.medicalSummary.medications;
+        const medsArray = medicationsString.split(",").map(m => m.trim()).filter(m => m.length > 0);
+
+        if (medsArray.length === 0) {
             medicationsList.innerHTML = `
                 <p class="text-sm text-slate-400 italic">No medications on record.</p>
             `;
@@ -190,17 +207,16 @@ async function loadMedications(uid) {
         }
 
         medicationsList.innerHTML = "";
-        medsSnap.forEach((medDoc) => {
-            const med = medDoc.data();
+        medsArray.forEach((medName) => {
             const card = document.createElement("div");
             card.className = "p-3 rounded-lg border-l-4 border-primary-container bg-surface-container-low";
             card.innerHTML = `
                 <div class="flex justify-between items-start">
-                    <p class="text-sm font-normal text-on-background">${med.name || med.medication || "—"}</p>
-                    <span class="text-[10px] text-slate-500 font-normal">${med.dosage || ""}</span>
+                    <p class="text-sm font-normal text-on-background">${medName}</p>
+                    <span class="text-[10px] text-slate-500 font-normal"></span>
                 </div>
                 <div class="mt-2 flex items-center justify-between">
-                    <span class="text-[10px] text-slate-600 font-normal">${med.frequency || med.schedule || ""}</span>
+                    <span class="text-[10px] text-slate-600 font-normal">As prescribed</span>
                     <button class="w-6 h-6 rounded-full bg-white border border-outline-variant flex items-center justify-center text-slate-400 hover:text-emerald-500">
                         <span class="material-symbols-outlined text-[16px]">check</span>
                     </button>
@@ -266,3 +282,48 @@ signOutLinks.forEach((link) => {
         });
     }
 });
+
+// ── Navigation with Transition ───────────────────────────────────────────────
+function navigateToMedRecords(e) {
+    e.preventDefault();
+    document.body.style.transition = "opacity 0.3s ease";
+    document.body.style.opacity = 0;
+    setTimeout(() => {
+        window.location.href = "Pat_MedRecords.html";
+    }, 300);
+}
+
+function navigateToMedications(e) {
+    e.preventDefault();
+    document.body.style.transition = "opacity 0.3s ease";
+    document.body.style.opacity = 0;
+    setTimeout(() => {
+        window.location.href = "pat_medications.html";
+    }, 300);
+}
+
+function navigateToCareTeam(e) {
+    e.preventDefault();
+    document.body.style.transition = "opacity 0.3s ease";
+    document.body.style.opacity = 0;
+    setTimeout(() => {
+        window.location.href = "pat_CareTeam.html";
+    }, 300);
+}
+
+function navigateToChangePassword(e) {
+    e.preventDefault();
+    document.body.style.transition = "opacity 0.3s ease";
+    document.body.style.opacity = 0;
+    setTimeout(() => {
+        window.location.href = "change_password.html";
+    }, 300);
+}
+
+if (medRecordsLink) medRecordsLink.addEventListener("click", navigateToMedRecords);
+if (mobileMedRecordsLink) mobileMedRecordsLink.addEventListener("click", navigateToMedRecords);
+if (medicationsLink) medicationsLink.addEventListener("click", navigateToMedications);
+if (mobileMedicationsLink) mobileMedicationsLink.addEventListener("click", navigateToMedications);
+if (careTeamLink) careTeamLink.addEventListener("click", navigateToCareTeam);
+if (changePasswordLink) changePasswordLink.addEventListener("click", navigateToChangePassword);
+

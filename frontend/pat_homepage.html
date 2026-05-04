@@ -177,17 +177,20 @@
                 <span class="material-symbols-outlined">dashboard</span>
                 <span class="">Dashboard</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all duration-150"
+            <a id="medical-records-link"
+                class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all duration-150"
                 href="#">
                 <span class="material-symbols-outlined">history_edu</span>
                 <span class="">Medical Records</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all duration-150"
+            <a id="medications-link"
+                class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all duration-150"
                 href="#">
                 <span class="material-symbols-outlined">medication</span>
                 <span class="">Medications</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all duration-150"
+            <a id="care-team-link"
+                class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all duration-150"
                 href="#">
                 <span class="material-symbols-outlined">group_add</span>
                 <span class="">Care Team</span>
@@ -207,6 +210,12 @@
                         style="font-variation-settings: 'FILL' 1;">airport_shuttle</span>
                 </button>
             </div>
+            <a id="change-password-link"
+                class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all duration-150"
+                href="#">
+                <span class="material-symbols-outlined">lock_reset</span>
+                <span>Change Password</span>
+            </a>
             <a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all duration-150 pt-2"
                 href="#">
                 <span class="material-symbols-outlined">logout</span>
@@ -243,12 +252,15 @@
                         <!-- Section Header -->
                         <div class="flex items-center justify-between mb-5">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0F52BA] to-[#6366f1] flex items-center justify-center shadow-md shadow-[#0F52BA]/20">
-                                    <span class="material-symbols-outlined text-white text-xl" style="font-variation-settings: 'FILL' 1;">neurology</span>
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0F52BA] to-[#6366f1] flex items-center justify-center shadow-md shadow-[#0F52BA]/20">
+                                    <span class="material-symbols-outlined text-white text-xl"
+                                        style="font-variation-settings: 'FILL' 1;">neurology</span>
                                 </div>
                                 <div>
                                     <h2 class="font-h3 text-lg text-on-background font-bold">AI Patient Overview</h2>
-                                    <p class="text-[11px] text-slate-500 font-normal">Powered by Groq AI · Auto-generated from your medical records</p>
+                                    <p class="text-[11px] text-slate-500 font-normal">Powered by Groq AI ·
+                                        Auto-generated from your medical records</p>
                                 </div>
                             </div>
                             <button id="regenerate-ai-btn"
@@ -267,7 +279,8 @@
                                 <div class="h-4 bg-surface-container-low rounded w-2/3"></div>
                                 <div class="h-4 bg-surface-container-low rounded w-full"></div>
                                 <div class="h-4 bg-surface-container-low rounded w-4/5"></div>
-                                <p class="text-xs text-slate-400 italic pt-2 !opacity-100 !animate-none">Analyzing your medical records with AI…</p>
+                                <p class="text-xs text-slate-400 italic pt-2 !opacity-100 !animate-none">Analyzing your
+                                    medical records with AI…</p>
                             </div>
                         </div>
                     </div>
@@ -288,9 +301,6 @@
                         <!-- Medication items will be populated by JS -->
                         <p class="text-sm text-slate-400 italic">Loading medications…</p>
                     </div>
-                    <button
-                        class="mt-4 pt-4 border-t border-slate-50 text-primary font-normal text-[10px] uppercase tracking-widest text-left hover:underline">Full
-                        Schedule</button>
                 </section>
             </div>
             <!-- Bottom Row: 3 columns spanning the full width of the main content area -->
@@ -302,10 +312,6 @@
                             <span class="material-symbols-outlined text-primary-container">group</span>
                             Your Care Team
                         </h3>
-                        <button
-                            class="text-primary-container font-normal text-[12px] flex items-center gap-1 hover:underline">
-                            Manage <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-                        </button>
                     </div>
                     <div id="care-team-list" class="space-y-3 flex-1">
                         <!-- Care team members will be populated by JS -->
@@ -323,11 +329,11 @@
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
             <span class="text-[10px] font-bold">Home</span>
         </button>
-        <button class="flex flex-col items-center gap-1 text-slate-500 font-normal">
+        <button id="mobile-medical-records-link" class="flex flex-col items-center gap-1 text-slate-500 font-normal">
             <span class="material-symbols-outlined">history_edu</span>
             <span class="text-[10px]">Records</span>
         </button>
-        <button class="flex flex-col items-center gap-1 text-slate-500 font-normal">
+        <button id="mobile-medications-link" class="flex flex-col items-center gap-1 text-slate-500 font-normal">
             <span class="material-symbols-outlined">medication</span>
             <span class="text-[10px]">Meds</span>
         </button>

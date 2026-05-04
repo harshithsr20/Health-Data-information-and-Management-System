@@ -15,14 +15,17 @@ const strengthFill = document.getElementById("strength-fill");
 const strengthLabel = document.getElementById("strength-label");
 
 // ── ID format patterns ────────────────────────────────────────────────────────
-// Admin:  000-0000          (2 segments: 3-4 digits)   → @hospital.com
-// Doctor: 000-0000-00000    (3 segments: 3-4-5 digits) → @doctor.com
+// Admin:   000-0000          (3-4 digits)                → @hospital.com
+// Doctor:  000-0000-00000    (3-4-5 digits)              → @doctor.com
+// Patient: 000-AA0000        (3 digits, 2 letters, 4 digits) → @patient.com
 const ADMIN_PATTERN = /^\d{3}-\d{4}$/;
 const DOCTOR_PATTERN = /^\d{3}-\d{4}-\d{5}$/;
+const PATIENT_PATTERN = /^\d{3}-[A-Z]{2}\d{4}$/;
 
 function resolveEmail(idValue) {
     if (ADMIN_PATTERN.test(idValue)) return idValue + "@hospital.com";
     if (DOCTOR_PATTERN.test(idValue)) return idValue + "@doctor.com";
+    if (PATIENT_PATTERN.test(idValue)) return idValue + "@patient.com";
     return null; // unrecognised format
 }
 
@@ -74,7 +77,7 @@ async function changePassword() {
 
     const email = resolveEmail(idValue);
     if (!email) {
-        showError("Invalid ID format. Admin IDs look like 000-0000, Doctor IDs like 000-0000-00000.");
+        showError("Invalid ID format. Admin: 000-0000, Doctor: 000-0000-00000, Patient: 000-AA0000.");
         return;
     }
 
@@ -116,8 +119,13 @@ async function changePassword() {
         showSuccess("Password updated successfully! Redirecting to login…");
 
         setTimeout(() => {
-            const isDoctor = DOCTOR_PATTERN.test(idValue);
-            window.location.href = isDoctor ? "doc_login.html" : "admin_log.html";
+            if (PATIENT_PATTERN.test(idValue)) {
+                window.location.href = "pat_login.html";
+            } else if (DOCTOR_PATTERN.test(idValue)) {
+                window.location.href = "doc_login.html";
+            } else {
+                window.location.href = "admin_log.html";
+            }
         }, 2000);
 
     } catch (error) {
