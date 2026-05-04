@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en" data-i18n-title="my_prescriptions_title">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>My Prescriptions - HDIMS Patient Portal</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#b7c9d5",
+                        "surface-tint": "#1d59c1",
+                        "background": "#f8f9ff",
+                        "tertiary": "#32434c",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#dce9ff",
+                        "tertiary-container": "#495a64",
+                        "outline-variant": "#c3c6d5",
+                        "inverse-surface": "#233144",
+                        "on-primary-fixed-variant": "#00419c",
+                        "on-primary-fixed": "#001945",
+                        "tertiary-fixed": "#d3e5f1",
+                        "on-tertiary-fixed-variant": "#384953",
+                        "surface-container-low": "#eff4ff",
+                        "secondary-fixed-dim": "#acc7ff",
+                        "on-surface-variant": "#434653",
+                        "surface-container": "#e6eeff",
+                        "primary-fixed": "#d9e2ff",
+                        "primary": "#003c90",
+                        "on-secondary-container": "#00397c",
+                        "surface-dim": "#ccdbf3",
+                        "surface": "#f8f9ff",
+                        "on-surface": "#0d1c2e",
+                        "outline": "#737784",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#bcceff",
+                        "primary-container": "#0f52ba",
+                        "surface-bright": "#f8f9ff",
+                        "on-background": "#0d1c2e",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#b0c6ff",
+                        "on-error": "#ffffff",
+                        "primary-fixed-dim": "#b0c6ff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#d7e2ff",
+                        "on-secondary-fixed": "#001a40",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#75a5ff",
+                        "on-tertiary-container": "#bfd1dc",
+                        "secondary": "#235cb1",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#004492",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-container-highest": "#d5e3fc",
+                        "surface-variant": "#d5e3fc",
+                        "on-tertiary-fixed": "#0c1e26"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "stack-lg": "32px",
+                        "unit": "8px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "sans": ["Public Sans", "Arial", "sans-serif"],
+                        "h1": ["Public Sans", "Arial", "sans-serif"],
+                        "h2": ["Public Sans", "Arial", "sans-serif"],
+                        "h3": ["Public Sans", "Arial", "sans-serif"],
+                        "body-md": ["Public Sans", "Arial", "sans-serif"],
+                        "body-lg": ["Public Sans", "Arial", "sans-serif"],
+                        "label-caps": ["Public Sans", "Arial", "sans-serif"],
+                        "label-sm": ["Public Sans", "Arial", "sans-serif"],
+                        "data-mono": ["Public Sans", "Arial", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "h1": ["36px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "h2": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "h3": ["22px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-sm": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em" }],
+                        "data-mono": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            background-color: #f8f9ff;
+            font-family: 'Public Sans', Arial, sans-serif;
+            font-weight: 400;
+            color: #0d1c2e;
+        }
+
+        .font-normal {
+            font-weight: 400 !important;
+        }
+
+        .font-bold {
+            font-weight: 700 !important;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(186, 26, 26, 0.7);
+            }
+
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(186, 26, 26, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(186, 26, 26, 0);
+            }
+        }
+
+        .animate-pulse-red {
+            animation: pulse-red 2s infinite;
+        }
+
+        /* ── Page transitions ── */
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeSlideOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(-12px);
+            }
+        }
+
+        .page-enter {
+            animation: fadeSlideIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .page-exit {
+            animation: fadeSlideOut 0.22s ease-in both;
+            pointer-events: none;
+        }
+
+        #transition-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #f8f9ff;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.22s ease-in;
+        }
+
+        #transition-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+    </style>
+</head>
+
+<body class="font-body-md text-on-background font-normal overflow-x-hidden">
+
+    <!-- ── Top App Bar ── -->
+    <header
+        class="fixed top-0 left-0 w-full h-16 flex items-center justify-between px-6 z-50 bg-white shadow-sm shadow-slate-200/50 border-b border-slate-200 antialiased">
+        <div class="flex items-center gap-4">
+            <span class="text-xl font-bold text-[#0F52BA] tracking-tight" data-i18n="app_title">HDIMS - Patient
+                Portal</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <div
+                class="hidden md:flex items-center bg-surface-container-low px-4 rounded-full border border-outline-variant/30 py-1">
+                <span class="material-symbols-outlined text-slate-500 mr-2">search</span>
+                <input class="bg-transparent border-none focus:ring-0 text-sm w-64 font-normal"
+                    placeholder="Search records..." data-i18n-placeholder="search_records_placeholder" type="text" />
+            </div>
+            <div
+                class="hidden md:flex items-center gap-2 bg-surface-container-low px-3 rounded-full border border-outline-variant/30 py-1">
+                <span class="material-symbols-outlined text-slate-500 text-[18px]">language</span>
+                <span id="hdims-language-label" class="text-xs text-slate-600 font-normal">Language</span>
+                <select id="hdims-language-select"
+                    class="bg-transparent border-none focus:ring-0 text-xs font-normal text-slate-700 pr-6">
+                </select>
+            </div>
+            <button class="p-2 rounded-full hover:bg-slate-50 transition-colors duration-200 text-slate-500">
+                <span class="material-symbols-outlined">person</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ── Sidebar — Medications active ── -->
+    <aside
+        class="fixed left-0 top-0 h-full hidden lg:flex flex-col pt-20 pb-8 z-30 bg-[#F8FAFC] border-r border-slate-200 w-64 text-sm font-normal">
+        <nav class="flex-1 px-4 space-y-1">
+            <a href="Pat_Homepage.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-blue-50/50 transition-all duration-150 cursor-pointer rounded-r-lg">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span data-i18n="nav_dashboard">Dashboard</span>
+            </a>
+            <a href="Pat_MedRecords.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-blue-50/50 transition-all duration-150 cursor-pointer rounded-r-lg">
+                <span class="material-symbols-outlined">history_edu</span>
+                <span data-i18n="nav_medical_records">Medical Records</span>
+            </a>
+            <!-- Medications — ACTIVE -->
+            <a href="Pat_Medications.html"
+                class="flex items-center gap-3 px-4 py-3 bg-white text-[#0F52BA] font-bold border-l-4 border-[#0F52BA] rounded-r-lg cursor-pointer active:scale-95 transition-all">
+                <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">medication</span>
+                <span data-i18n="nav_medications">Medications</span>
+            </a>
+
+        </nav>
+
+        <div class="px-6 mt-auto space-y-4">
+            <div class="flex items-center gap-3">
+                <button
+                    class="flex-1 py-3 px-4 bg-error text-white rounded-lg font-bold flex items-center justify-center gap-2 shadow-lg shadow-error/20 hover:opacity-90 active:scale-95 transition-all">
+                    <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">emergency</span>
+                    <span data-i18n="emergency_contact">Emergency Contact</span>
+                </button>
+                <button
+                    class="w-12 h-12 rounded-full bg-error text-white flex items-center justify-center shadow-lg shadow-error/30 animate-pulse-red hover:opacity-90 transition-all"
+                    title="Call Ambulance" data-i18n-title="call_ambulance">
+                    <span class="material-symbols-outlined"
+                        style="font-variation-settings:'FILL' 1">airport_shuttle</span>
+                </button>
+            </div>
+            <a id="change-password-link" href="change_password.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 transition-all duration-150">
+                <span class="material-symbols-outlined">lock_reset</span>
+                <span data-i18n="change_password">Change Password</span>
+            </a>
+            <a href="#"
+                class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 transition-all duration-150">
+                <span class="material-symbols-outlined">logout</span>
+                <span data-i18n="sign_out">Sign Out</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ── Main Content ── -->
+    <main class="lg:ml-64 pt-20 pb-12 px-6 md:px-margin-desktop">
+        <div class="max-w-container-max mx-auto">
+            <div class="flex flex-col gap-8">
+
+                <!-- Page Header -->
+                <header>
+                    <span class="text-xs font-bold text-secondary uppercase tracking-widest" data-i18n="patient_portal">Patient
+                        Portal</span>
+                    <h1 class="font-h1 text-h1 text-on-background mt-1 mb-2 font-bold" data-i18n="my_prescriptions_title">My
+                        Prescriptions</h1>
+                    <p class="text-body-md text-slate-500 font-normal" data-i18n="prescriptions_subtitle">View and manage your
+                        active medication schedule
+                        and refill history.</p>
+                </header>
+
+                <!-- Summary Card -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4">
+                        <div class="h-12 w-12 rounded-full bg-blue-50 flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined">pill</span>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest" data-i18n="active_meds">Active
+                                Meds</p>
+                            <p class="text-2xl font-bold text-on-background" id="active-meds-count">0 Medications</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medications Table -->
+                <section class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                        <h2 class="font-h3 text-h3 text-on-background font-bold" data-i18n="active_medications">Active
+                            Medications</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-white">
+                                    <th
+                                        class="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                                        <span data-i18n="table_medication">Medication</span></th>
+                                    <th
+                                        class="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                                        <span data-i18n="table_schedule">Schedule</span></th>
+                                    <th
+                                        class="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                                        <span data-i18n="table_progress">Progress</span></th>
+                                    <th
+                                        class="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                                        <span data-i18n="table_status">Status</span></th>
+                                    <th
+                                        class="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">
+                                        <span data-i18n="table_log_intake">Log Intake</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="medications-table-body" class="divide-y divide-slate-100">
+                                <tr>
+                                    <td colspan="5" class="px-8 py-6 text-center text-slate-500 italic">
+                                        <span data-i18n="loading_medications_dots">Loading medications...</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ── Mobile Bottom Nav — Meds active ── -->
+    <nav
+        class="fixed bottom-0 left-0 w-full bg-white flex justify-around items-center h-16 border-t border-slate-200 md:hidden z-50">
+        <a href="Pat_Homepage.html" class="flex flex-col items-center gap-1 text-slate-500 font-normal">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="text-[10px]" data-i18n="home">Home</span>
+        </a>
+        <a href="Pat_MedRecords.html" class="flex flex-col items-center gap-1 text-slate-500 font-normal">
+            <span class="material-symbols-outlined">history_edu</span>
+            <span class="text-[10px]" data-i18n="records">Records</span>
+        </a>
+        <a href="Pat_Medications.html" class="flex flex-col items-center gap-1 text-[#0F52BA] font-bold">
+            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">medication</span>
+            <span class="text-[10px]" data-i18n="meds">Meds</span>
+        </a>
+        <a href="#" class="flex flex-col items-center gap-1 text-slate-500 font-normal">
+            <span class="material-symbols-outlined">chat_bubble_outline</span>
+            <span class="text-[10px]">Chat</span>
+        </a>
+    </nav>
+
+    <!-- Transition overlay -->
+    <div id="transition-overlay"></div>
+
+    <script type="module" src="scripts/i18n.js"></script>
+    <script>
+        // ── Entrance animation ──
+        document.body.classList.add('page-enter');
+
+        // ── Exit animation on internal link clicks ──
+        const overlay = document.getElementById('transition-overlay');
+        document.querySelectorAll('a[href]').forEach(function (link) {
+            const href = link.getAttribute('href');
+            if (!href || href === '#' || href.startsWith('http') || href.startsWith('mailto')) return;
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                overlay.classList.add('active');
+                document.body.classList.add('page-exit');
+                setTimeout(function () { window.location.href = href; }, 240);
+            });
+        });
+
+        // Fade overlay out immediately on load (handles back navigation)
+        window.addEventListener('pageshow', function () {
+            if (overlay) overlay.classList.remove('active');
+        });
+    </script>
+    <script type="module">
+        import { db } from "../../firebaseConfig.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const patientUID = sessionStorage.getItem("patientUID");
+            const tableBody = document.getElementById("medications-table-body");
+            const activeMedsCount = document.getElementById("active-meds-count");
+
+            if (!patientUID) {
+                window.location.href = "pat_login.html";
+                return;
+            }
+
+            try {
+                // Fetch the patient document
+                const patientRef = doc(db, "Patients", patientUID);
+                const patientSnap = await getDoc(patientRef);
+
+                if (!patientSnap.exists() || !patientSnap.data().medicalSummary || !patientSnap.data().medicalSummary.medications) {
+                    const t = window.HDIMS_I18N?.t || ((x) => x);
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="px-8 py-6 text-center text-slate-500 italic">
+                                ${t("no_active_medications")}
+                            </td>
+                        </tr>
+                    `;
+                    activeMedsCount.textContent = "0 Medications";
+                    return;
+                }
+
+                const data = patientSnap.data();
+                const medicationsString = data.medicalSummary.medications;
+                
+                // Assuming medications are comma separated if there are multiple (e.g. "Zerodol, Paracetamol")
+                const medsArray = medicationsString.split(",").map(m => m.trim()).filter(m => m.length > 0);
+
+                if (medsArray.length === 0) {
+                    const t = window.HDIMS_I18N?.t || ((x) => x);
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="px-8 py-6 text-center text-slate-500 italic">
+                                ${t("no_active_medications")}
+                            </td>
+                        </tr>
+                    `;
+                    activeMedsCount.textContent = "0 Medications";
+                    return;
+                }
+
+                tableBody.innerHTML = "";
+                
+                medsArray.forEach((medName, index) => {
+                    const t = window.HDIMS_I18N?.t || ((x) => x);
+                    const tr = document.createElement("tr");
+                    tr.className = "hover:bg-slate-50/80 transition-colors";
+
+                    tr.innerHTML = `
+                        <td class="px-8 py-6">
+                            <div class="flex items-center gap-4">
+                                <div class="h-10 w-10 bg-blue-50 rounded-lg flex items-center justify-center text-primary">
+                                    <span class="material-symbols-outlined">medication</span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-on-background">${medName}</p>
+                                    <p class="text-sm text-slate-500">${t("as_prescribed")}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-8 py-6">
+                            <div class="flex flex-col gap-1">
+                                <span class="font-medium text-on-background">—</span>
+                            </div>
+                        </td>
+                        <td class="px-8 py-6">
+                            <div class="flex flex-col gap-1">
+                                <span class="font-medium text-on-background" id="progress-med-${index}">0%</span>
+                                <div class="w-full bg-slate-100 rounded-full h-1.5">
+                                    <div class="bg-primary h-1.5 rounded-full transition-all duration-500" style="width:0%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-8 py-6">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-secondary-container text-on-secondary-container">${t("active")}</span>
+                        </td>
+                        <td class="px-8 py-6 text-right">
+                            <button class="inline-flex items-center justify-center px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primary/90 active:scale-95 transition-all shadow-sm">+1</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+
+                activeMedsCount.textContent = medsArray.length + (medsArray.length === 1 ? " Medication" : " Medications");
+
+            } catch (error) {
+                console.error("Error loading medications:", error);
+                const t = window.HDIMS_I18N?.t || ((x) => x);
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-8 py-6 text-center text-red-500 italic">
+                            ${t("error_loading_medications")}
+                        </td>
+                    </tr>
+                `;
+            }
+        });
+    </script>
+</body>
+
+</html>

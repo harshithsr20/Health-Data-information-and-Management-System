@@ -11,6 +11,37 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json({ limit: "2mb" }));
 
+function normalizeLanguage(code) {
+    const c = String(code || "").toLowerCase().trim();
+    const supported = new Set(["en", "hi", "kn", "te", "ur", "ta", "ml", "mr", "pa", "bn", "gu", "or"]);
+    if (supported.has(c)) return c;
+    return "en";
+}
+
+function languageDisplayName(code) {
+    switch (normalizeLanguage(code)) {
+        case "hi": return "Hindi";
+        case "kn": return "Kannada";
+        case "te": return "Telugu";
+        case "ur": return "Urdu";
+        case "ta": return "Tamil";
+        case "ml": return "Malayalam";
+        case "mr": return "Marathi";
+        case "pa": return "Punjabi";
+        case "bn": return "Bengali";
+        case "gu": return "Gujarati";
+        case "or": return "Odia";
+        default: return "English";
+    }
+}
+
+function languageInstruction(code) {
+    const lang = normalizeLanguage(code);
+    if (lang === "en") return "";
+    const name = languageDisplayName(lang);
+    return `\n\nLanguage requirement: Write the ENTIRE response in ${name} (use the normal script for ${name}). Keep numbers/units exactly as numbers (e.g., 120/80, 37.5°C, 5.4 mmol/L). Keep the Markdown structure (headings and bullet points).`;
+}
+
 // ── POST /api/analyze ────────────────────────────────────────────────────────
 // Receives patient medical summary data from the frontend,
 // sends it to Groq API for analysis, and returns the AI report.
@@ -160,10 +191,168 @@ Format in clean Markdown using headings and bullet points.`;
         return res.status(500).json({ error: "Internal server error: " + err.message });
     }
 });
+// ── POST /api/patient-overview ───────────────────────────────────────────────
+// Receives patient data from Firestore, sends it to Groq API,
+// and returns a concise AI-generated patient overview for the dashboard.
+app.post("/api/patient-overview", async (req, res) => {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
+        return res.status(500).json({ error: "Groq API key is not configured." });
+    }
+
+    const { patientData, language } = req.body;
+    if (!patientData) {
+        return res.status(400).json({ error: "Missing patientData in request body." });
+    }
+
+    const prompt = `You are a medical data assistant. Given the following patient record from a hospital database, generate a concise Patient Overview card.
+
+Patient Data:
+${JSON.stringify(patientData, null, 2)}
+
+Generate a response in this EXACT format (use Markdown):
+
+## Patient Profile
+- **Name:** [full name]
+- **Age:** [calculate from DOB if available, otherwise say "Not available"]
+- **Gender:** [gender]
+- **Blood Type:** [bloodType]
+- **Height:** [height] cm
+- **Weight:** [weight] kg
+- **BMI:** [calculate BMI from height and weight if both available: weight(kg) / (height(m))². Round to 1 decimal]
+
+## Quick Health Summary
+Write 2-3 sentences summarising the patient's overall health profile based on the available data — mention any recorded conditions, medications, or hospitalizations. If data is limited, say so briefly.
+
+**Important rules:**
+- Only use data that actually exists in the record. Do NOT invent data.
+- Do NOT include contact info, address, or ID numbers.
+- Do NOT diagnose or prescribe. Just summarize what's on record.
+- Keep it brief and professional.` + languageInstruction(language);
+
+    try {
+        const groqUrl = "https://api.groq.com/openai/v1/chat/completions";
+
+        const groqResponse = await fetch(groqUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: "llama-3.3-70b-versatile",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are a concise medical data assistant. You present patient information clearly in Markdown. You never diagnose or prescribe."
+                    },
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ],
+                temperature: 0.2,
+                max_tokens: 1024,
+            }),
+        });
+
+        if (!groqResponse.ok) {
+            const errorBody = await groqResponse.text();
+            console.error("Groq API error:", groqResponse.status, errorBody);
+            return res.status(502).json({ error: `Groq API returned ${groqResponse.status}.` });
+        }
+
+        const groqResult = await groqResponse.json();
+        const text = groqResult?.choices?.[0]?.message?.content || "No overview could be generated.";
+
+        return res.json({ overview: text });
+    } catch (err) {
+        console.error("Server error during Groq call:", err);
+        return res.status(500).json({ error: "Internal server error: " + err.message });
+    }
+});
+
+// ── POST /api/simplify-report ────────────────────────────────────────────────
+// Patient-facing: receives extracted PDF text and returns a plain-language
+// explanation that any non-medical person can understand.
+app.post("/api/simplify-report", async (req, res) => {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
+        return res.status(500).json({ error: "Groq API key is not configured." });
+    }
+
+    const { reportText, language } = req.body;
+    if (!reportText) {
+        return res.status(400).json({ error: "Missing reportText in request body." });
+    }
+
+    const prompt = `You are a warm, friendly family doctor explaining a medical report to a patient who has NO medical background. The patient is a normal everyday person — they don't know medical terms, abbreviations, or what lab values mean.
+
+Your job is to read the following medical report text and explain it in PLAIN, SIMPLE language that anyone can understand.
+
+**Rules you MUST follow:**
+- Use everyday words. If a medical term appears (e.g., "hemoglobin", "creatinine", "WBC"), briefly explain what it is in simple words (e.g., "Hemoglobin — this is the part of your blood that carries oxygen to your body").
+- Use relatable analogies where helpful (e.g., "Think of white blood cells as your body's soldiers that fight infections").
+- Clearly state whether each result is **normal**, **slightly off**, or **needs attention**, using simple color-coded labels like ✅ Normal, ⚠️ Slightly Off, or 🔴 Needs Attention.
+- If everything looks fine, reassure the patient warmly.
+- If something needs attention, explain it gently without causing panic. Suggest they talk to their doctor for next steps.
+- Do NOT diagnose or prescribe. You are only explaining what the report says.
+- Keep your language warm, supportive, and encouraging — like a caring doctor talking to a patient face to face.
+- Use short paragraphs, bullet points, and headings for easy reading.
+- Add a brief "Bottom Line" section at the end summarizing the overall picture in 2-3 simple sentences.
+
+**Extracted Report Text:**
+${reportText}
+
+Please provide the explanation in clean Markdown with clear headings and bullet points.` + languageInstruction(language);
+
+    try {
+        const groqUrl = "https://api.groq.com/openai/v1/chat/completions";
+
+        const groqResponse = await fetch(groqUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: "llama-3.3-70b-versatile",
+                messages: [
+                    {
+                        role: "system",
+                        content: "You are a kind, patient-friendly medical explainer. You translate complex medical reports into plain, everyday language that anyone can understand — even someone who has never seen a medical report before. You are warm, reassuring, and never use jargon without immediately explaining it. You never diagnose or prescribe."
+                    },
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ],
+                temperature: 0.4,
+                max_tokens: 3072,
+            }),
+        });
+
+        if (!groqResponse.ok) {
+            const errorBody = await groqResponse.text();
+            console.error("Groq API error:", groqResponse.status, errorBody);
+            return res.status(502).json({ error: `Groq API returned ${groqResponse.status}.` });
+        }
+
+        const groqResult = await groqResponse.json();
+        const text = groqResult?.choices?.[0]?.message?.content || "Could not simplify the report.";
+
+        return res.json({ summary: text });
+    } catch (err) {
+        console.error("Server error during Groq call:", err);
+        return res.status(500).json({ error: "Internal server error: " + err.message });
+    }
+});
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
     console.log(`✅  AI proxy server running at http://localhost:${PORT}`);
-    console.log(`   POST /api/analyze  →  Groq patient history analysis endpoint`);
-    console.log(`   POST /api/analyze-pdf-text  →  Groq PDF report analysis endpoint`);
+    console.log(`   POST /api/analyze            →  Groq patient history analysis`);
+    console.log(`   POST /api/analyze-pdf-text    →  Groq PDF report analysis`);
+    console.log(`   POST /api/patient-overview    →  Groq patient overview for dashboard`);
+    console.log(`   POST /api/simplify-report     →  Groq patient-friendly report explainer`);
 });

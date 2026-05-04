@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html class="light" lang="en" data-i18n-title="medical_records_title">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>HDIMS - Medical Records</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Public+Sans:wght@600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#b7c9d5",
+                        "surface-tint": "#1d59c1",
+                        "background": "#f8f9ff",
+                        "tertiary": "#32434c",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#dce9ff",
+                        "tertiary-container": "#495a64",
+                        "outline-variant": "#c3c6d5",
+                        "inverse-surface": "#233144",
+                        "on-primary-fixed-variant": "#00419c",
+                        "on-primary-fixed": "#001945",
+                        "tertiary-fixed": "#d3e5f1",
+                        "on-tertiary-fixed-variant": "#384953",
+                        "surface-container-low": "#eff4ff",
+                        "secondary-fixed-dim": "#acc7ff",
+                        "on-surface-variant": "#434653",
+                        "surface-container": "#e6eeff",
+                        "primary-fixed": "#d9e2ff",
+                        "primary": "#003c90",
+                        "on-secondary-container": "#00397c",
+                        "surface-dim": "#ccdbf3",
+                        "surface": "#f8f9ff",
+                        "on-surface": "#0d1c2e",
+                        "outline": "#737784",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#bcceff",
+                        "primary-container": "#0f52ba",
+                        "surface-bright": "#f8f9ff",
+                        "on-background": "#0d1c2e",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#b0c6ff",
+                        "on-error": "#ffffff",
+                        "primary-fixed-dim": "#b0c6ff",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#d7e2ff",
+                        "on-secondary-fixed": "#001a40",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#75a5ff",
+                        "on-tertiary-container": "#bfd1dc",
+                        "secondary": "#235cb1",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#004492",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-container-highest": "#d5e3fc",
+                        "surface-variant": "#d5e3fc",
+                        "on-tertiary-fixed": "#0c1e26"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "stack-lg": "32px",
+                        "unit": "8px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "sans": ["Inter", "Arial", "sans-serif"],
+                        "h3": ["Public Sans", "Arial", "sans-serif"],
+                        "h2": ["Public Sans", "Arial", "sans-serif"],
+                        "h1": ["Public Sans", "Arial", "sans-serif"],
+                        "body-md": ["Inter", "Arial", "sans-serif"],
+                        "body-lg": ["Inter", "Arial", "sans-serif"],
+                        "label-caps": ["Inter", "Arial", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "h3": ["24px", { "lineHeight": "1.4" }],
+                        "h2": ["30px", { "lineHeight": "1.3" }],
+                        "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em" }],
+                        "body-md": ["16px", { "lineHeight": "1.6" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5" }],
+                        "label-caps": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.04em" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.02em" }],
+                        "data-mono": ["14px", { "lineHeight": "1.4" }]
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background-color: #f8f9ff;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .active-tab-indicator {
+            font-variation-settings: 'FILL' 1;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Public Sans', Arial, sans-serif;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(186, 26, 26, 0.7);
+            }
+
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(186, 26, 26, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(186, 26, 26, 0);
+            }
+        }
+
+        .animate-pulse-red {
+            animation: pulse-red 2s infinite;
+        }
+
+        /* ── Page transition ── */
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeSlideOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(-12px);
+            }
+        }
+
+        .page-enter {
+            animation: fadeSlideIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .page-exit {
+            animation: fadeSlideOut 0.22s ease-in both;
+            pointer-events: none;
+        }
+
+        /* overlay that fades over the old page */
+        #transition-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #f8f9ff;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.22s ease-in;
+        }
+
+        #transition-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* ── AI Summary Styles ── */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 8px rgba(15, 82, 186, 0.15); }
+            50% { box-shadow: 0 0 20px rgba(15, 82, 186, 0.35); }
+        }
+        .analyzing-glow {
+            animation: pulse-glow 1.5s ease-in-out infinite;
+        }
+
+        .ai-summary h1 { font-size: 20px; font-weight: 700; margin: 14px 0 6px; color: #0d1c2e; }
+        .ai-summary h2 { font-size: 17px; font-weight: 600; margin: 12px 0 6px; color: #003c90; border-bottom: 1px solid #c3c6d5; padding-bottom: 4px; }
+        .ai-summary h3 { font-size: 15px; font-weight: 600; margin: 10px 0 4px; color: #0d1c2e; }
+        .ai-summary p  { margin: 4px 0 8px; line-height: 1.7; }
+        .ai-summary ul { list-style: disc; padding-left: 24px; margin: 4px 0 10px; }
+        .ai-summary ol { list-style: decimal; padding-left: 24px; margin: 4px 0 10px; }
+        .ai-summary li { margin-bottom: 4px; line-height: 1.6; }
+        .ai-summary strong { font-weight: 600; }
+        .ai-summary hr { border: none; border-top: 1px solid #c3c6d5; margin: 14px 0; }
+        .ai-summary code { background: #eff4ff; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    </style>
+</head>
+
+<body class="text-on-background bg-background overflow-x-hidden">
+
+    <!-- ── Top App Bar (from code.html) ── -->
+    <header
+        class="fixed top-0 left-0 w-full h-16 flex items-center justify-between px-6 z-50 bg-white shadow-sm shadow-slate-200/50 border-b border-slate-200">
+        <div class="flex items-center gap-4">
+            <span class="text-xl font-bold text-[#0F52BA] tracking-tight" data-i18n="app_title">HDIMS - Patient
+                Portal</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <div
+                class="hidden md:flex items-center bg-surface-container-low px-4 rounded-full border border-outline-variant/30 py-1">
+                <span class="material-symbols-outlined text-slate-500 mr-2">search</span>
+                <input class="bg-transparent border-none focus:ring-0 text-sm w-64" placeholder="Search records..."
+                    data-i18n-placeholder="search_records_placeholder" type="text" />
+            </div>
+            <div
+                class="hidden md:flex items-center gap-2 bg-surface-container-low px-3 rounded-full border border-outline-variant/30 py-1">
+                <span class="material-symbols-outlined text-slate-500 text-[18px]">language</span>
+                <span id="hdims-language-label" class="text-xs text-slate-600 font-normal">Language</span>
+                <select id="hdims-language-select"
+                    class="bg-transparent border-none focus:ring-0 text-xs font-normal text-slate-700 pr-6">
+                </select>
+            </div>
+            <button class="p-2 rounded-full hover:bg-slate-50 transition-colors text-slate-500">
+                <span class="material-symbols-outlined">person</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ── Sidebar (from code.html, Medical Records set as active) ── -->
+    <aside
+        class="fixed left-0 top-0 h-full hidden lg:flex flex-col pt-20 pb-8 z-30 bg-[#F8FAFC] border-r border-slate-200 w-64 text-sm font-normal">
+        <nav class="flex-1 px-4 space-y-1">
+            <!-- Dashboard -->
+            <a href="pat_homepage.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-blue-50/50 transition-all duration-150 cursor-pointer">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span data-i18n="nav_dashboard">Dashboard</span>
+            </a>
+            <!-- Medical Records — ACTIVE -->
+            <a href="code2.html"
+                class="flex items-center gap-3 px-4 py-3 bg-white text-[#0F52BA] font-bold border-l-4 border-[#0F52BA] rounded-r-lg cursor-pointer active:scale-95 transition-all">
+                <span class="material-symbols-outlined">history_edu</span>
+                <span data-i18n="nav_medical_records">Medical Records</span>
+            </a>
+            <!-- Medications -->
+            <a href="pat_medications.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-blue-50/50 transition-all duration-150">
+                <span class="material-symbols-outlined">medication</span>
+                <span data-i18n="nav_medications">Medications</span>
+            </a>
+
+        </nav>
+
+        <!-- Bottom actions -->
+        <div class="px-6 mt-auto space-y-4">
+            <div class="flex items-center gap-3">
+                <button
+                    class="flex-1 py-3 px-4 bg-error text-white rounded-lg font-bold flex items-center justify-center gap-2 shadow-lg shadow-error/20 hover:opacity-90 active:scale-95 transition-all">
+                    <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">emergency</span>
+                    <span data-i18n="emergency_contact">Emergency Contact</span>
+                </button>
+                <button
+                    class="w-12 h-12 rounded-full bg-error text-white flex items-center justify-center shadow-lg shadow-error/30 animate-pulse-red hover:opacity-90 transition-all"
+                    title="Call Ambulance" data-i18n-title="call_ambulance">
+                    <span class="material-symbols-outlined"
+                        style="font-variation-settings:'FILL' 1">airport_shuttle</span>
+                </button>
+            </div>
+            <a id="change-password-link" href="change_password.html"
+                class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 transition-all duration-150">
+                <span class="material-symbols-outlined">lock_reset</span>
+                <span data-i18n="change_password">Change Password</span>
+            </a>
+            <a href="#"
+                class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 transition-all duration-150">
+                <span class="material-symbols-outlined">logout</span>
+                <span data-i18n="sign_out">Sign Out</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ── Main Content (shifted right for sidebar) ── -->
+    <main class="lg:ml-64 pt-24 pb-32 px-gutter max-w-[1280px] mx-auto min-h-screen">
+
+        <!-- Page header -->
+        <div class="flex flex-col md:flex-row justify-between gap-6 mb-6">
+            <div class="space-y-2">
+                <h1 class="text-h1 text-on-surface font-bold" data-i18n="medical_records_title">Medical Records</h1>
+                <p class="text-body-lg text-on-surface-variant max-w-2xl" data-i18n="medical_records_subtitle">Access
+                    your full medical history, including
+                    secure document storage for clinical reports, prescriptions, and digital imaging.</p>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="reports-loading" class="grid grid-cols-1 gap-4">
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm animate-pulse">
+                <div class="flex items-start gap-4">
+                    <div class="h-14 w-14 rounded-lg bg-surface-container-low flex-shrink-0"></div>
+                    <div class="flex-1 space-y-3 pt-1">
+                        <div class="h-4 bg-surface-container-low rounded w-1/4"></div>
+                        <div class="h-5 bg-surface-container-low rounded w-1/2"></div>
+                        <div class="h-3 bg-surface-container-low rounded w-1/3"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm animate-pulse">
+                <div class="flex items-start gap-4">
+                    <div class="h-14 w-14 rounded-lg bg-surface-container-low flex-shrink-0"></div>
+                    <div class="flex-1 space-y-3 pt-1">
+                        <div class="h-4 bg-surface-container-low rounded w-1/3"></div>
+                        <div class="h-5 bg-surface-container-low rounded w-2/5"></div>
+                        <div class="h-3 bg-surface-container-low rounded w-1/4"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm animate-pulse">
+                <div class="flex items-start gap-4">
+                    <div class="h-14 w-14 rounded-lg bg-surface-container-low flex-shrink-0"></div>
+                    <div class="flex-1 space-y-3 pt-1">
+                        <div class="h-4 bg-surface-container-low rounded w-1/5"></div>
+                        <div class="h-5 bg-surface-container-low rounded w-1/3"></div>
+                        <div class="h-3 bg-surface-container-low rounded w-1/4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Reports List -->
+        <div id="reports-list" class="hidden grid grid-cols-1 gap-4">
+            <!-- Report cards will be inserted here by JavaScript -->
+        </div>
+
+        <!-- Empty state -->
+        <div id="no-reports"
+            class="hidden mt-6 flex flex-col items-center justify-center py-16 bg-surface-container-low rounded-xl border-2 border-dashed border-outline-variant">
+            <span class="material-symbols-outlined text-outline text-6xl mb-4 opacity-40">folder_off</span>
+            <p class="text-xl font-semibold text-on-surface-variant mb-1" data-i18n="no_reports_found">No reports found
+            </p>
+            <p class="text-body-md text-outline" data-i18n="no_reports_hint">Your medical reports will appear here once
+                uploaded by your care team.</p>
+        </div>
+
+        <!-- Error state -->
+        <div id="fetch-error"
+            class="hidden mt-6 flex items-center gap-3 p-5 bg-red-50 border border-red-200 rounded-xl">
+            <span class="material-symbols-outlined text-error text-2xl">error</span>
+            <div>
+                <p class="text-sm font-semibold text-red-700" data-i18n="failed_to_load_reports">Failed to load reports
+                </p>
+                <p id="error-text" class="text-sm text-red-600 mt-0.5"></p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ── Mobile Bottom Nav ── -->
+    <nav
+        class="fixed bottom-0 left-0 w-full bg-white flex justify-around items-center h-16 border-t border-slate-200 md:hidden z-50">
+        <a href="pat_homepage.html" class="flex flex-col items-center gap-1 text-slate-500">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="text-[10px]" data-i18n="home">Home</span>
+        </a>
+        <a href="code2.html" class="flex flex-col items-center gap-1 text-[#0F52BA] font-bold">
+            <span class="material-symbols-outlined active-tab-indicator"
+                style="font-variation-settings:'FILL' 1">history_edu</span>
+            <span class="text-[10px]" data-i18n="records">Records</span>
+        </a>
+        <a href="pat_medications.html" class="flex flex-col items-center gap-1 text-slate-500">
+            <span class="material-symbols-outlined">medication</span>
+            <span class="text-[10px]" data-i18n="meds">Meds</span>
+        </a>
+        <a href="#" class="flex flex-col items-center gap-1 text-slate-500">
+            <span class="material-symbols-outlined">chat_bubble_outline</span>
+            <span class="text-[10px]">Chat</span>
+        </a>
+    </nav>
+
+    <!-- Transition overlay -->
+    <div id="transition-overlay"></div>
+
+    <script type="module" src="scripts/i18n.js"></script>
+    <script type="module">
+        // ── Firebase imports ──────────────────────────────────────────────────
+        import { db, auth } from "../firebaseConfig.js";
+        import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+        // ── Auth Guard ────────────────────────────────────────────────────────
+        const patientUID = sessionStorage.getItem("patientUID");
+        if (!patientUID) {
+            window.location.href = "pat_login.html";
+        }
+
+        // ── DOM refs ──────────────────────────────────────────────────────────
+        const reportsLoading = document.getElementById("reports-loading");
+        const reportsList = document.getElementById("reports-list");
+        const noReports = document.getElementById("no-reports");
+        const fetchError = document.getElementById("fetch-error");
+        const errorText = document.getElementById("error-text");
+
+        // ── Entrance animation ────────────────────────────────────────────────
+        document.body.classList.add('page-enter');
+        const overlay = document.getElementById('transition-overlay');
+        document.querySelectorAll('a[href]').forEach(function (link) {
+            const href = link.getAttribute('href');
+            if (!href || href === '#' || href.startsWith('http') || href.startsWith('mailto')) return;
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                overlay.classList.add('active');
+                document.body.classList.add('page-exit');
+                setTimeout(function () { window.location.href = href; }, 240);
+            });
+        });
+        window.addEventListener('pageshow', function () {
+            overlay.classList.remove('active');
+        });
+
+        // ── Helpers ───────────────────────────────────────────────────────────
+        function formatBytes(bytes) {
+            if (!bytes || bytes === 0) return "—";
+            if (bytes < 1024) return bytes + " B";
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+            return (bytes / 1048576).toFixed(1) + " MB";
+        }
+
+        function formatUploadDate(dateString) {
+            if (!dateString) return "—";
+            const d = new Date(dateString);
+            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+        }
+
+        function base64ToBlob(base64Data) {
+            const parts = base64Data.split(",");
+            const mimeMatch = parts[0].match(/data:(.*);base64/);
+            const contentType = mimeMatch ? mimeMatch[1] : "application/pdf";
+            const byteString = atob(parts[1]);
+            const byteArray = new Uint8Array(byteString.length);
+            for (let i = 0; i < byteString.length; i++) {
+                byteArray[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([byteArray], { type: contentType });
+        }
+
+        function openPdf(fileData) {
+            const blob = base64ToBlob(fileData);
+            const url = URL.createObjectURL(blob);
+            window.open(url, "_blank");
+        }
+
+        // ── Report icon / color mapping (from viewPatientReports) ─────────────
+        function getReportMeta(reportType) {
+            const t = (reportType || "").toLowerCase();
+            if (t.includes("blood") || t.includes("cbc") || t.includes("hemoglobin"))
+                return { icon: "bloodtype", bg: "bg-red-50", text: "text-red-500", badge: "bg-red-100 text-red-700" };
+            if (t.includes("x-ray") || t.includes("xray") || t.includes("radiology"))
+                return { icon: "radiology", bg: "bg-green-50", text: "text-green-600", badge: "bg-green-100 text-green-700" };
+            if (t.includes("mri") || t.includes("ct") || t.includes("scan"))
+                return { icon: "radiology", bg: "bg-purple-50", text: "text-purple-500", badge: "bg-purple-100 text-purple-700" };
+            if (t.includes("ecg") || t.includes("cardio") || t.includes("heart"))
+                return { icon: "ecg_heart", bg: "bg-pink-50", text: "text-pink-500", badge: "bg-pink-100 text-pink-700" };
+            if (t.includes("lipid") || t.includes("cholesterol"))
+                return { icon: "experiment", bg: "bg-amber-50", text: "text-amber-600", badge: "bg-amber-100 text-amber-700" };
+            if (t.includes("urine") || t.includes("kidney") || t.includes("renal"))
+                return { icon: "water_drop", bg: "bg-cyan-50", text: "text-cyan-600", badge: "bg-cyan-100 text-cyan-700" };
+            if (t.includes("prescription"))
+                return { icon: "medication", bg: "bg-indigo-50", text: "text-indigo-500", badge: "bg-indigo-100 text-indigo-700" };
+            return { icon: "description", bg: "bg-primary-fixed", text: "text-primary", badge: "bg-secondary-container text-on-secondary-container" };
+        }
+
+        // ── Markdown → HTML converter ─────────────────────────────────────────
+        function markdownToHtml(md) {
+            let html = md
+                .replace(/^#### (.+)$/gm, '<h4>$1</h4>')
+                .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+                .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+                .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+                .replace(/^---$/gm, '<hr>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/^[\-\*] (.+)$/gm, '<li>$1</li>')
+                .replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+
+            html = html.replace(/(<li>.*?<\/li>\s*)+/gs, (match) => '<ul>' + match + '</ul>');
+
+            html = html.split('\n').map(line => {
+                const trimmed = line.trim();
+                if (!trimmed) return '';
+                if (trimmed.startsWith('<')) return trimmed;
+                return `<p>${trimmed}</p>`;
+            }).join('\n');
+
+            return html;
+        }
+
+        // ── PDF text extraction + AI simplification ───────────────────────────
+        async function extractAndSimplifyPdf(base64Data, resultDiv, btn) {
+            const contentDiv = resultDiv.querySelector('.ai-summary-content');
+
+            // Show loading state
+            resultDiv.classList.remove("hidden");
+            contentDiv.innerHTML = `
+                <div class="flex items-center gap-3 text-primary p-4 analyzing-glow rounded-lg bg-primary-fixed/20 border border-primary/20">
+                    <span class="material-symbols-outlined animate-spin">progress_activity</span>
+                    <div>
+                        <p class="font-semibold text-sm">Reading your report and creating a simple explanation...</p>
+                        <p class="text-xs text-on-surface-variant mt-0.5">This may take a few seconds</p>
+                    </div>
+                </div>
+            `;
+            btn.disabled = true;
+            btn.classList.add("opacity-50", "cursor-not-allowed");
+
+            try {
+                // 1. Decode base64 to bytes
+                const base64Str = base64Data.split(',')[1];
+                const binaryString = atob(base64Str);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+
+                // 2. Extract text from PDF using pdf.js
+                const loadingTask = pdfjsLib.getDocument({ data: bytes });
+                const pdf = await loadingTask.promise;
+                let extractedText = "";
+                const maxPages = Math.min(pdf.numPages, 5);
+
+                for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
+                    const page = await pdf.getPage(pageNum);
+                    const textContent = await page.getTextContent();
+                    const pageText = textContent.items.map(item => item.str).join(" ");
+                    extractedText += pageText + "\n\n";
+                }
+
+                if (!extractedText.trim()) {
+                    throw new Error("Could not read any text from this PDF. It may be a scanned image.");
+                }
+
+                // 3. Send to patient-friendly AI endpoint
+                const language = window.HDIMS_I18N?.getLanguage?.() || "en";
+                const response = await fetch("http://localhost:3001/api/simplify-report", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ reportText: extractedText, language }),
+                });
+
+                if (!response.ok) {
+                    const errBody = await response.json().catch(() => ({}));
+                    throw new Error(errBody.error || `Server returned ${response.status}`);
+                }
+
+                const result = await response.json();
+                contentDiv.innerHTML = markdownToHtml(result.summary);
+
+            } catch (err) {
+                console.error("AI Simplify Error:", err);
+                contentDiv.innerHTML = `
+                    <div class="flex items-center gap-2 text-red-700 bg-red-50 p-3 rounded-lg border border-red-200">
+                        <span class="material-symbols-outlined">error</span>
+                        <p class="text-sm">${err.message || "Failed to explain this report. Please try again."}</p>
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove("opacity-50", "cursor-not-allowed");
+            }
+        }
+
+        // ── Render report cards ───────────────────────────────────────────────
+        function renderReports(reports) {
+            reportsLoading.classList.add("hidden");
+
+            if (reports.length === 0) {
+                noReports.classList.remove("hidden");
+                return;
+            }
+
+            reportsList.classList.remove("hidden");
+            reportsList.innerHTML = "";
+
+            reports.forEach((report, index) => {
+                const reportType = report.reportType || "General Report";
+                const meta = getReportMeta(reportType);
+
+                // Wrapper div for card + AI summary panel
+                const wrapper = document.createElement("div");
+                wrapper.className = "flex flex-col";
+
+                // Main card
+                const card = document.createElement("div");
+                card.className = "bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-primary-fixed-dim hover:shadow-md transition-all group";
+
+                // Left: icon + info
+                const leftDiv = document.createElement("div");
+                leftDiv.className = "flex items-start gap-4";
+                leftDiv.innerHTML = `
+                    <div class="h-14 w-14 rounded-lg ${meta.bg} flex items-center justify-center flex-shrink-0">
+                        <span class="material-symbols-outlined text-3xl ${meta.text}" style="font-variation-settings: 'FILL' 1;">${meta.icon}</span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1 flex-wrap">
+                            <span class="text-label-sm ${meta.badge} px-2 py-0.5 rounded-sm uppercase text-xs font-semibold tracking-wider">${reportType}</span>
+                            <span class="text-sm text-outline">•</span>
+                            <span class="text-sm text-on-surface-variant">${formatUploadDate(report.uploadedAt)}</span>
+                        </div>
+                        <h3 class="text-xl font-semibold text-on-surface mb-1">${report.fileName || "Untitled Report"}</h3>
+                        <p class="text-sm text-on-surface-variant flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">straighten</span>
+                            ${formatBytes(report.size)}
+                        </p>
+                    </div>
+                `;
+
+                // Right: buttons
+                const rightDiv = document.createElement("div");
+                rightDiv.className = "flex items-center flex-wrap justify-between md:justify-end gap-3";
+
+                // AI Explain button
+                const explainBtn = document.createElement("button");
+                explainBtn.className = "bg-gradient-to-r from-[#0F52BA] to-[#6366f1] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-[#0F52BA]/20 active:scale-[0.97] transition-all flex items-center gap-2";
+                explainBtn.innerHTML = `<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">auto_awesome</span> Explain in Simple Terms`;
+
+                // View PDF button
+                const viewBtn = document.createElement("button");
+                viewBtn.className = "bg-surface-container-lowest border-2 border-primary text-primary px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary hover:text-on-primary transition-all flex items-center gap-2";
+                viewBtn.innerHTML = `View PDF <span class="material-symbols-outlined text-sm">visibility</span>`;
+                viewBtn.addEventListener("click", () => openPdf(report.fileData));
+
+                // AI Summary panel (hidden by default)
+                const aiPanel = document.createElement("div");
+                aiPanel.id = `ai-summary-${index}`;
+                aiPanel.className = "hidden mt-2 rounded-xl border border-outline-variant/60 bg-surface-container-low overflow-hidden";
+                aiPanel.innerHTML = `
+                    <div class="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-primary-fixed/60 to-surface-container-low border-b border-outline-variant/40">
+                        <span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">emoji_objects</span>
+                        <h4 class="text-sm font-bold text-on-surface">Your Report Explained Simply</h4>
+                        <span class="ml-auto px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full bg-primary-fixed text-primary">AI Powered</span>
+                    </div>
+                    <div class="ai-summary-content ai-summary p-5 text-sm text-on-surface leading-relaxed"></div>
+                `;
+
+                // Wire up the explain button
+                explainBtn.addEventListener("click", () => extractAndSimplifyPdf(report.fileData, aiPanel, explainBtn));
+
+                rightDiv.appendChild(explainBtn);
+                rightDiv.appendChild(viewBtn);
+                card.appendChild(leftDiv);
+                card.appendChild(rightDiv);
+                wrapper.appendChild(card);
+                wrapper.appendChild(aiPanel);
+                reportsList.appendChild(wrapper);
+            });
+        }
+
+        // ── Show error ────────────────────────────────────────────────────────
+        function showError(msg) {
+            reportsLoading.classList.add("hidden");
+            reportsList.classList.add("hidden");
+            noReports.classList.add("hidden");
+            errorText.textContent = msg;
+            fetchError.classList.remove("hidden");
+        }
+
+        // ── Fetch reports from Firestore ──────────────────────────────────────
+        async function fetchReports() {
+            try {
+                // Verify patient document exists
+                const patientDocRef = doc(db, "Patients", patientUID);
+                const patientSnap = await getDoc(patientDocRef);
+                if (!patientSnap.exists()) {
+                    const t = window.HDIMS_I18N?.t || ((x) => x);
+                    showError(t("failed_to_load_reports"));
+                    return;
+                }
+
+                // Fetch reports sub-collection
+                const reportsRef = collection(db, "Patients", patientUID, "reports");
+                const reportsSnap = await getDocs(reportsRef);
+                const reports = [];
+                reportsSnap.forEach(docSnap => {
+                    reports.push(docSnap.data());
+                });
+
+                renderReports(reports);
+            } catch (err) {
+                console.error("Error fetching reports:", err);
+                const t = window.HDIMS_I18N?.t || ((x) => x);
+                showError(t("failed_to_load_reports"));
+            }
+        }
+
+        fetchReports();
+
+        // ── Sign Out ──────────────────────────────────────────────────────────
+        document.querySelectorAll("a").forEach((link) => {
+            if (link.textContent.includes("Sign Out")) {
+                link.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    signOut(auth).then(() => {
+                        sessionStorage.removeItem("patientUID");
+                        window.location.href = "pat_login.html";
+                    }).catch((error) => {
+                        console.error("Sign out error:", error);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
