@@ -11,6 +11,37 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json({ limit: "2mb" }));
 
+function normalizeLanguage(code) {
+    const c = String(code || "").toLowerCase().trim();
+    const supported = new Set(["en", "hi", "kn", "te", "ur", "ta", "ml", "mr", "pa", "bn", "gu", "or"]);
+    if (supported.has(c)) return c;
+    return "en";
+}
+
+function languageDisplayName(code) {
+    switch (normalizeLanguage(code)) {
+        case "hi": return "Hindi";
+        case "kn": return "Kannada";
+        case "te": return "Telugu";
+        case "ur": return "Urdu";
+        case "ta": return "Tamil";
+        case "ml": return "Malayalam";
+        case "mr": return "Marathi";
+        case "pa": return "Punjabi";
+        case "bn": return "Bengali";
+        case "gu": return "Gujarati";
+        case "or": return "Odia";
+        default: return "English";
+    }
+}
+
+function languageInstruction(code) {
+    const lang = normalizeLanguage(code);
+    if (lang === "en") return "";
+    const name = languageDisplayName(lang);
+    return `\n\nLanguage requirement: Write the ENTIRE response in ${name} (use the normal script for ${name}). Keep numbers/units exactly as numbers (e.g., 120/80, 37.5°C, 5.4 mmol/L). Keep the Markdown structure (headings and bullet points).`;
+}
+
 // ── POST /api/analyze ────────────────────────────────────────────────────────
 // Receives patient medical summary data from the frontend,
 // sends it to Groq API for analysis, and returns the AI report.
@@ -169,7 +200,7 @@ app.post("/api/patient-overview", async (req, res) => {
         return res.status(500).json({ error: "Groq API key is not configured." });
     }
 
-    const { patientData } = req.body;
+    const { patientData, language } = req.body;
     if (!patientData) {
         return res.status(400).json({ error: "Missing patientData in request body." });
     }
@@ -197,7 +228,7 @@ Write 2-3 sentences summarising the patient's overall health profile based on th
 - Only use data that actually exists in the record. Do NOT invent data.
 - Do NOT include contact info, address, or ID numbers.
 - Do NOT diagnose or prescribe. Just summarize what's on record.
-- Keep it brief and professional.`;
+- Keep it brief and professional.` + languageInstruction(language);
 
     try {
         const groqUrl = "https://api.groq.com/openai/v1/chat/completions";
@@ -250,7 +281,7 @@ app.post("/api/simplify-report", async (req, res) => {
         return res.status(500).json({ error: "Groq API key is not configured." });
     }
 
-    const { reportText } = req.body;
+    const { reportText, language } = req.body;
     if (!reportText) {
         return res.status(400).json({ error: "Missing reportText in request body." });
     }
@@ -273,7 +304,7 @@ Your job is to read the following medical report text and explain it in PLAIN, S
 **Extracted Report Text:**
 ${reportText}
 
-Please provide the explanation in clean Markdown with clear headings and bullet points.`;
+Please provide the explanation in clean Markdown with clear headings and bullet points.` + languageInstruction(language);
 
     try {
         const groqUrl = "https://api.groq.com/openai/v1/chat/completions";

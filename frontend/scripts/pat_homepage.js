@@ -89,10 +89,11 @@ async function fetchAIOverview(patientData) {
     showAILoading();
 
     try {
+        const language = window.HDIMS_I18N?.getLanguage?.() || "en";
         const response = await fetch("http://localhost:3001/api/patient-overview", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ patientData }),
+            body: JSON.stringify({ patientData, language }),
         });
 
         if (!response.ok) {
@@ -108,6 +109,13 @@ async function fetchAIOverview(patientData) {
         showAIError("Could not generate AI overview. Make sure the server is running on port 3001.");
     }
 }
+
+// Refresh AI overview when language changes
+window.addEventListener("hdims:languageChanged", async () => {
+    if (cachedPatientData) {
+        await fetchAIOverview(cachedPatientData);
+    }
+});
 
 // ── Render AI Markdown Response ──────────────────────────────────────────────
 function renderAIOverview(markdownText) {

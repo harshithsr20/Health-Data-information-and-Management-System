@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-i18n-title="app_title">
 
 <head>
     <meta charset="utf-8" />
@@ -150,15 +150,22 @@
     <header
         class="fixed top-0 left-0 w-full h-16 flex items-center justify-between px-6 z-50 bg-white dark:bg-slate-900 shadow-sm shadow-slate-200/50 dark:shadow-none border-b border-slate-200 dark:border-slate-800 antialiased">
         <div class="flex items-center gap-4">
-            <span class="text-xl font-bold text-[#0F52BA] dark:text-blue-400 tracking-tight">HDIMS - Patient
-                Portal</span>
+            <span class="text-xl font-bold text-[#0F52BA] dark:text-blue-400 tracking-tight" data-i18n="app_title">HDIMS
+                - Patient Portal</span>
         </div>
         <div class="flex items-center gap-stack-md">
             <div
                 class="hidden md:flex items-center bg-surface-container-low px-4 rounded-full border border-outline-variant/30 py-1">
                 <span class="material-symbols-outlined text-slate-500 mr-2">search</span>
                 <input class="bg-transparent border-none focus:ring-0 text-body-md w-64 font-normal"
-                    placeholder="Search records..." type="text" />
+                    placeholder="Search records..." data-i18n-placeholder="search_records_placeholder" type="text" />
+            </div>
+            <div class="hidden md:flex items-center gap-2 bg-surface-container-low px-3 rounded-full border border-outline-variant/30 py-1">
+                <span class="material-symbols-outlined text-slate-500 text-[18px]">language</span>
+                <span id="hdims-language-label" class="text-xs text-slate-600 font-normal">Language</span>
+                <select id="hdims-language-select"
+                    class="bg-transparent border-none focus:ring-0 text-xs font-normal text-slate-700 pr-6">
+                </select>
             </div>
             <div class="flex items-center gap-3">
                 <button
@@ -175,19 +182,19 @@
             <a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-900 text-[#0F52BA] dark:text-blue-300 border-l-4 border-[#0F52BA] rounded-r-lg cursor-pointer active:scale-95 transition-all"
                 href="#">
                 <span class="material-symbols-outlined">dashboard</span>
-                <span class="">Dashboard</span>
+                <span class="" data-i18n="nav_dashboard">Dashboard</span>
             </a>
             <a id="medical-records-link"
                 class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all duration-150"
                 href="#">
                 <span class="material-symbols-outlined">history_edu</span>
-                <span class="">Medical Records</span>
+                <span class="" data-i18n="nav_medical_records">Medical Records</span>
             </a>
             <a id="medications-link"
                 class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all duration-150"
                 href="#">
                 <span class="material-symbols-outlined">medication</span>
-                <span class="">Medications</span>
+                <span class="" data-i18n="nav_medications">Medications</span>
             </a>
 
         </nav>
@@ -196,11 +203,11 @@
                 <button
                     class="flex-1 py-3 px-4 bg-error text-white rounded-lg flex items-center justify-center gap-2 shadow-lg shadow-error/20 hover:opacity-90 active:scale-95 transition-all">
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">emergency</span>
-                    <span>Emergency Contact</span>
+                    <span data-i18n="emergency_contact">Emergency Contact</span>
                 </button>
                 <button
                     class="w-12 h-12 rounded-full bg-error text-white flex items-center justify-center shadow-lg shadow-error/30 animate-pulse-red hover:opacity-90 transition-all"
-                    title="Call Ambulance">
+                    title="Call Ambulance" data-i18n-title="call_ambulance">
                     <span class="material-symbols-outlined"
                         style="font-variation-settings: 'FILL' 1;">airport_shuttle</span>
                 </button>
@@ -209,12 +216,12 @@
                 class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all duration-150"
                 href="#">
                 <span class="material-symbols-outlined">lock_reset</span>
-                <span>Change Password</span>
+                <span data-i18n="change_password">Change Password</span>
             </a>
             <a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all duration-150 pt-2"
                 href="#">
                 <span class="material-symbols-outlined">logout</span>
-                <span>Sign Out</span>
+                <span data-i18n="sign_out">Sign Out</span>
             </a>
         </div>
     </aside>
@@ -225,13 +232,16 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <span
-                        class="font-label-caps text-label-caps text-secondary uppercase tracking-widest font-normal">Patient
+                        class="font-label-caps text-label-caps text-secondary uppercase tracking-widest font-normal"
+                        data-i18n="patient_portal_dashboard">Patient
                         Portal Dashboard</span>
                     <h1 class="font-h1 text-h1 text-on-background mt-2 font-bold">Hi, <span id="greeting-name"></span>
                     </h1>
                 </div>
                 <div class="text-right">
-                    <p class="font-body-md text-slate-500 font-normal">Last updated: <span id="last-updated"></span></p>
+                    <p class="font-body-md text-slate-500 font-normal"><span data-i18n="last_updated">Last updated:</span>
+                        <span id="last-updated"></span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -254,14 +264,17 @@
                                 </div>
                                 <div>
                                     <h2 class="font-h3 text-lg text-on-background font-bold">AI Patient Overview</h2>
-                                    <p class="text-[11px] text-slate-500 font-normal">Powered by Groq AI ·
+                                    <h2 class="font-h3 text-lg text-on-background font-bold" data-i18n="ai_patient_overview">
+                                        AI Patient Overview</h2>
+                                    <p class="text-[11px] text-slate-500 font-normal" data-i18n="ai_powered_by">Powered by Groq
+                                        AI ·
                                         Auto-generated from your medical records</p>
                                 </div>
                             </div>
                             <button id="regenerate-ai-btn"
                                 class="px-4 py-2 bg-surface-container-low text-primary text-xs rounded-lg border border-outline-variant/30 hover:bg-surface-container hover:shadow-sm active:scale-[0.97] transition-all flex items-center gap-1.5 font-normal">
                                 <span class="material-symbols-outlined text-[16px]">refresh</span>
-                                Regenerate
+                                <span data-i18n="regenerate">Regenerate</span>
                             </button>
                         </div>
                         <!-- AI Content Area -->
@@ -274,7 +287,8 @@
                                 <div class="h-4 bg-surface-container-low rounded w-2/3"></div>
                                 <div class="h-4 bg-surface-container-low rounded w-full"></div>
                                 <div class="h-4 bg-surface-container-low rounded w-4/5"></div>
-                                <p class="text-xs text-slate-400 italic pt-2 !opacity-100 !animate-none">Analyzing your
+                                <p class="text-xs text-slate-400 italic pt-2 !opacity-100 !animate-none"
+                                    data-i18n="analyzing_records">Analyzing your
                                     medical records with AI…</p>
                             </div>
                         </div>
@@ -287,14 +301,15 @@
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="font-h3 text-lg text-on-background flex items-center gap-2 font-bold">
                             <span class="material-symbols-outlined text-primary-container">schedule</span>
-                            Daily Medications
+                            <span data-i18n="daily_medications">Daily Medications</span>
                         </h3>
                         <span
-                            class="px-2 py-1 bg-primary-fixed text-on-primary-fixed text-[10px] font-normal rounded">PENDING</span>
+                            class="px-2 py-1 bg-primary-fixed text-on-primary-fixed text-[10px] font-normal rounded"
+                            data-i18n="pending">PENDING</span>
                     </div>
                     <div id="medications-list" class="space-y-3 flex-1">
                         <!-- Medication items will be populated by JS -->
-                        <p class="text-sm text-slate-400 italic">Loading medications…</p>
+                        <p class="text-sm text-slate-400 italic" data-i18n="loading_medications_ellipsis">Loading medications…</p>
                     </div>
                 </section>
             </div>
@@ -308,17 +323,18 @@
         class="fixed bottom-0 left-0 w-full bg-white dark:bg-slate-900 flex justify-around items-center h-16 border-t border-slate-200 dark:border-slate-800 md:hidden z-50">
         <button class="flex flex-col items-center gap-1 text-[#0F52BA]">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
-            <span class="text-[10px] font-bold">Home</span>
+            <span class="text-[10px] font-bold" data-i18n="home">Home</span>
         </button>
         <button id="mobile-medical-records-link" class="flex flex-col items-center gap-1 text-slate-500 font-normal">
             <span class="material-symbols-outlined">history_edu</span>
-            <span class="text-[10px]">Records</span>
+            <span class="text-[10px]" data-i18n="records">Records</span>
         </button>
         <button id="mobile-medications-link" class="flex flex-col items-center gap-1 text-slate-500 font-normal">
             <span class="material-symbols-outlined">medication</span>
-            <span class="text-[10px]">Meds</span>
+            <span class="text-[10px]" data-i18n="meds">Meds</span>
         </button>
     </nav>
+    <script type="module" src="scripts/i18n.js"></script>
     <script type="module" src="scripts/pat_homepage.js"></script>
 </body>
 
