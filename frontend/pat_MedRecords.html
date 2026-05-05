@@ -203,23 +203,82 @@
 
         /* ── AI Summary Styles ── */
         @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 8px rgba(15, 82, 186, 0.15); }
-            50% { box-shadow: 0 0 20px rgba(15, 82, 186, 0.35); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 8px rgba(15, 82, 186, 0.15);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(15, 82, 186, 0.35);
+            }
         }
+
         .analyzing-glow {
             animation: pulse-glow 1.5s ease-in-out infinite;
         }
 
-        .ai-summary h1 { font-size: 20px; font-weight: 700; margin: 14px 0 6px; color: #0d1c2e; }
-        .ai-summary h2 { font-size: 17px; font-weight: 600; margin: 12px 0 6px; color: #003c90; border-bottom: 1px solid #c3c6d5; padding-bottom: 4px; }
-        .ai-summary h3 { font-size: 15px; font-weight: 600; margin: 10px 0 4px; color: #0d1c2e; }
-        .ai-summary p  { margin: 4px 0 8px; line-height: 1.7; }
-        .ai-summary ul { list-style: disc; padding-left: 24px; margin: 4px 0 10px; }
-        .ai-summary ol { list-style: decimal; padding-left: 24px; margin: 4px 0 10px; }
-        .ai-summary li { margin-bottom: 4px; line-height: 1.6; }
-        .ai-summary strong { font-weight: 600; }
-        .ai-summary hr { border: none; border-top: 1px solid #c3c6d5; margin: 14px 0; }
-        .ai-summary code { background: #eff4ff; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+        .ai-summary h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 14px 0 6px;
+            color: #0d1c2e;
+        }
+
+        .ai-summary h2 {
+            font-size: 17px;
+            font-weight: 600;
+            margin: 12px 0 6px;
+            color: #003c90;
+            border-bottom: 1px solid #c3c6d5;
+            padding-bottom: 4px;
+        }
+
+        .ai-summary h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin: 10px 0 4px;
+            color: #0d1c2e;
+        }
+
+        .ai-summary p {
+            margin: 4px 0 8px;
+            line-height: 1.7;
+        }
+
+        .ai-summary ul {
+            list-style: disc;
+            padding-left: 24px;
+            margin: 4px 0 10px;
+        }
+
+        .ai-summary ol {
+            list-style: decimal;
+            padding-left: 24px;
+            margin: 4px 0 10px;
+        }
+
+        .ai-summary li {
+            margin-bottom: 4px;
+            line-height: 1.6;
+        }
+
+        .ai-summary strong {
+            font-weight: 600;
+        }
+
+        .ai-summary hr {
+            border: none;
+            border-top: 1px solid #c3c6d5;
+            margin: 14px 0;
+        }
+
+        .ai-summary code {
+            background: #eff4ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
     </style>
 </head>
 
@@ -321,7 +380,8 @@
 
         <!-- Loading State -->
         <div id="reports-loading" class="grid grid-cols-1 gap-4">
-            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm animate-pulse">
+            <div
+                class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm animate-pulse">
                 <div class="flex items-start gap-4">
                     <div class="h-14 w-14 rounded-lg bg-surface-container-low flex-shrink-0"></div>
                     <div class="flex-1 space-y-3 pt-1">
@@ -331,7 +391,8 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm animate-pulse">
+            <div
+                class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm animate-pulse">
                 <div class="flex items-start gap-4">
                     <div class="h-14 w-14 rounded-lg bg-surface-container-low flex-shrink-0"></div>
                     <div class="flex-1 space-y-3 pt-1">
@@ -341,7 +402,8 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm animate-pulse">
+            <div
+                class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm animate-pulse">
                 <div class="flex items-start gap-4">
                     <div class="h-14 w-14 rounded-lg bg-surface-container-low flex-shrink-0"></div>
                     <div class="flex-1 space-y-3 pt-1">
@@ -397,10 +459,6 @@
             <span class="material-symbols-outlined">medication</span>
             <span class="text-[10px]" data-i18n="meds">Meds</span>
         </a>
-        <a href="#" class="flex flex-col items-center gap-1 text-slate-500">
-            <span class="material-symbols-outlined">chat_bubble_outline</span>
-            <span class="text-[10px]">Chat</span>
-        </a>
     </nav>
 
     <!-- Transition overlay -->
@@ -454,7 +512,7 @@
         function formatUploadDate(dateString) {
             if (!dateString) return "—";
             const d = new Date(dateString);
-            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
             return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
         }
 

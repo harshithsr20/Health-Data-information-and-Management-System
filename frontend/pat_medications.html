@@ -284,11 +284,14 @@
 
                 <!-- Page Header -->
                 <header>
-                    <span class="text-xs font-bold text-secondary uppercase tracking-widest" data-i18n="patient_portal">Patient
+                    <span class="text-xs font-bold text-secondary uppercase tracking-widest"
+                        data-i18n="patient_portal">Patient
                         Portal</span>
-                    <h1 class="font-h1 text-h1 text-on-background mt-1 mb-2 font-bold" data-i18n="my_prescriptions_title">My
+                    <h1 class="font-h1 text-h1 text-on-background mt-1 mb-2 font-bold"
+                        data-i18n="my_prescriptions_title">My
                         Prescriptions</h1>
-                    <p class="text-body-md text-slate-500 font-normal" data-i18n="prescriptions_subtitle">View and manage your
+                    <p class="text-body-md text-slate-500 font-normal" data-i18n="prescriptions_subtitle">View and
+                        manage your
                         active medication schedule
                         and refill history.</p>
                 </header>
@@ -300,7 +303,8 @@
                             <span class="material-symbols-outlined">pill</span>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest" data-i18n="active_meds">Active
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest"
+                                data-i18n="active_meds">Active
                                 Meds</p>
                             <p class="text-2xl font-bold text-on-background" id="active-meds-count">0 Medications</p>
                         </div>
@@ -319,19 +323,24 @@
                                 <tr class="bg-white">
                                     <th
                                         class="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
-                                        <span data-i18n="table_medication">Medication</span></th>
+                                        <span data-i18n="table_medication">Medication</span>
+                                    </th>
                                     <th
                                         class="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
-                                        <span data-i18n="table_schedule">Schedule</span></th>
+                                        <span data-i18n="table_schedule">Schedule</span>
+                                    </th>
                                     <th
                                         class="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
-                                        <span data-i18n="table_progress">Progress</span></th>
+                                        <span data-i18n="table_progress">Progress</span>
+                                    </th>
                                     <th
                                         class="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
-                                        <span data-i18n="table_status">Status</span></th>
+                                        <span data-i18n="table_status">Status</span>
+                                    </th>
                                     <th
                                         class="px-8 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 text-right">
-                                        <span data-i18n="table_log_intake">Log Intake</span></th>
+                                        <span data-i18n="table_log_intake">Log Intake</span>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="medications-table-body" class="divide-y divide-slate-100">
@@ -363,10 +372,6 @@
         <a href="Pat_Medications.html" class="flex flex-col items-center gap-1 text-[#0F52BA] font-bold">
             <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">medication</span>
             <span class="text-[10px]" data-i18n="meds">Meds</span>
-        </a>
-        <a href="#" class="flex flex-col items-center gap-1 text-slate-500 font-normal">
-            <span class="material-symbols-outlined">chat_bubble_outline</span>
-            <span class="text-[10px]">Chat</span>
         </a>
     </nav>
 
@@ -430,7 +435,7 @@
 
                 const data = patientSnap.data();
                 const medicationsString = data.medicalSummary.medications;
-                
+
                 // Assuming medications are comma separated if there are multiple (e.g. "Zerodol, Paracetamol")
                 const medsArray = medicationsString.split(",").map(m => m.trim()).filter(m => m.length > 0);
 
@@ -448,7 +453,7 @@
                 }
 
                 tableBody.innerHTML = "";
-                
+
                 medsArray.forEach((medName, index) => {
                     const t = window.HDIMS_I18N?.t || ((x) => x);
                     const tr = document.createElement("tr");

@@ -242,6 +242,7 @@ async function loadMedications(uid) {
 
 // ── Load Care Team (sub-collection) ──────────────────────────────────────────
 async function loadCareTeam(uid) {
+    if (!careTeamList) return;
     try {
         const teamRef = collection(db, "Patients", uid, "careTeam");
         const teamSnap = await getDocs(teamRef);
@@ -303,41 +304,36 @@ if (mobileLogoutBtn) {
 }
 
 // ── Navigation with Transition ───────────────────────────────────────────────
-function navigateToMedRecords(e) {
+function navigateWithTransition(e, url) {
     e.preventDefault();
-    document.body.style.transition = "opacity 0.3s ease";
-    document.body.style.opacity = 0;
+    const overlay = document.getElementById("transition-overlay");
+    if (overlay) overlay.classList.add("active");
+    document.body.classList.add("page-exit");
     setTimeout(() => {
-        window.location.href = "pat_MedRecords.html";
-    }, 300);
+        window.location.href = url;
+    }, 240);
+}
+
+function navigateToMedRecords(e) {
+    navigateWithTransition(e, "pat_MedRecords.html");
 }
 
 function navigateToMedications(e) {
-    e.preventDefault();
-    document.body.style.transition = "opacity 0.3s ease";
-    document.body.style.opacity = 0;
-    setTimeout(() => {
-        window.location.href = "pat_medications.html";
-    }, 300);
+    navigateWithTransition(e, "pat_medications.html");
 }
 
 function navigateToCareTeam(e) {
-    e.preventDefault();
-    document.body.style.transition = "opacity 0.3s ease";
-    document.body.style.opacity = 0;
-    setTimeout(() => {
-        window.location.href = "pat_CareTeam.html";
-    }, 300);
+    navigateWithTransition(e, "pat_CareTeam.html");
 }
 
 function navigateToChangePassword(e) {
-    e.preventDefault();
-    document.body.style.transition = "opacity 0.3s ease";
-    document.body.style.opacity = 0;
-    setTimeout(() => {
-        window.location.href = "change_password.html";
-    }, 300);
+    navigateWithTransition(e, "change_password.html");
 }
+
+window.addEventListener('pageshow', function () {
+    const overlay = document.getElementById('transition-overlay');
+    if (overlay) overlay.classList.remove('active');
+});
 
 if (medRecordsLink) medRecordsLink.addEventListener("click", navigateToMedRecords);
 if (mobileMedRecordsLink) mobileMedRecordsLink.addEventListener("click", navigateToMedRecords);
