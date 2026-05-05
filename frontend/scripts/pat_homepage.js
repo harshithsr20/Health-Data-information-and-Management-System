@@ -14,6 +14,7 @@ const medRecordsLink = document.getElementById("medical-records-link");
 const mobileMedRecordsLink = document.getElementById("mobile-medical-records-link");
 const medicationsLink = document.getElementById("medications-link");
 const mobileMedicationsLink = document.getElementById("mobile-medications-link");
+const mobileLogoutBtn = document.getElementById("mobile-logout-btn");
 const careTeamLink = document.getElementById("care-team-link");
 const changePasswordLink = document.getElementById("change-password-link");
 
@@ -276,20 +277,30 @@ async function loadCareTeam(uid) {
 }
 
 // ── Logout Functionality ─────────────────────────────────────────────────────
+function performSignOut() {
+    signOut(auth).then(() => {
+        sessionStorage.removeItem("patientUID");
+        window.location.href = "pat_login.html";
+    }).catch((error) => {
+        console.error("Sign out error:", error);
+    });
+}
+
 const signOutLinks = document.querySelectorAll("a");
 signOutLinks.forEach((link) => {
     if (link.textContent.includes("Sign Out")) {
         link.addEventListener("click", (e) => {
             e.preventDefault();
-            signOut(auth).then(() => {
-                sessionStorage.removeItem("patientUID");
-                window.location.href = "pat_login.html";
-            }).catch((error) => {
-                console.error("Sign out error:", error);
-            });
+            performSignOut();
         });
     }
 });
+
+if (mobileLogoutBtn) {
+    mobileLogoutBtn.addEventListener("click", () => {
+        performSignOut();
+    });
+}
 
 // ── Navigation with Transition ───────────────────────────────────────────────
 function navigateToMedRecords(e) {
@@ -297,7 +308,7 @@ function navigateToMedRecords(e) {
     document.body.style.transition = "opacity 0.3s ease";
     document.body.style.opacity = 0;
     setTimeout(() => {
-        window.location.href = "Pat_MedRecords.html";
+        window.location.href = "pat_MedRecords.html";
     }, 300);
 }
 
