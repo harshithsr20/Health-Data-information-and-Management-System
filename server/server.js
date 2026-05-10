@@ -349,10 +349,14 @@ Please provide the explanation in clean Markdown with clear headings and bullet 
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
-    console.log(`✅  AI proxy server running at http://localhost:${PORT}`);
-    console.log(`   POST /api/analyze            →  Groq patient history analysis`);
-    console.log(`   POST /api/analyze-pdf-text    →  Groq PDF report analysis`);
-    console.log(`   POST /api/patient-overview    →  Groq patient overview for dashboard`);
-    console.log(`   POST /api/simplify-report     →  Groq patient-friendly report explainer`);
-});
+if (process.env.NODE_ENV !== "production" && !process.env.NETLIFY) {
+    app.listen(PORT, () => {
+        console.log(`✅  AI proxy server running at http://localhost:${PORT}`);
+        console.log(`   POST /api/analyze            →  Groq patient history analysis`);
+        console.log(`   POST /api/analyze-pdf-text    →  Groq PDF report analysis`);
+        console.log(`   POST /api/patient-overview    →  Groq patient overview for dashboard`);
+        console.log(`   POST /api/simplify-report     →  Groq patient-friendly report explainer`);
+    });
+}
+
+export default app;

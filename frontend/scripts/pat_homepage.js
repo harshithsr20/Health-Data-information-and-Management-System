@@ -91,7 +91,8 @@ async function fetchAIOverview(patientData) {
 
     try {
         const language = window.HDIMS_I18N?.getLanguage?.() || "en";
-        const response = await fetch("http://localhost:3001/api/patient-overview", {
+        const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' ? 'http://localhost:3001' : '';
+        const response = await fetch(`${API_BASE}/api/patient-overview`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ patientData, language }),

@@ -626,7 +626,8 @@
 
                 // 3. Send to patient-friendly AI endpoint
                 const language = window.HDIMS_I18N?.getLanguage?.() || "en";
-                const response = await fetch("http://localhost:3001/api/simplify-report", {
+                const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' ? 'http://localhost:3001' : '';
+                const response = await fetch(`${API_BASE}/api/simplify-report`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ reportText: extractedText, language }),
