@@ -231,18 +231,18 @@
     <aside
         class="fixed left-0 top-0 h-full hidden lg:flex flex-col pt-20 pb-8 z-30 bg-[#F8FAFC] border-r border-slate-200 w-64 text-sm font-normal">
         <nav class="flex-1 px-4 space-y-1">
-            <a href="Pat_Homepage.html"
+            <a href="pat_homepage.html"
                 class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-blue-50/50 transition-all duration-150 cursor-pointer rounded-r-lg">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span data-i18n="nav_dashboard">Dashboard</span>
             </a>
-            <a href="Pat_MedRecords.html"
+            <a href="pat_MedRecords.html"
                 class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-blue-50/50 transition-all duration-150 cursor-pointer rounded-r-lg">
                 <span class="material-symbols-outlined">history_edu</span>
                 <span data-i18n="nav_medical_records">Medical Records</span>
             </a>
             <!-- Medications — ACTIVE -->
-            <a href="Pat_Medications.html"
+            <a href="pat_medications.html"
                 class="flex items-center gap-3 px-4 py-3 bg-white text-[#0F52BA] font-bold border-l-4 border-[#0F52BA] rounded-r-lg cursor-pointer active:scale-95 transition-all">
                 <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">medication</span>
                 <span data-i18n="nav_medications">Medications</span>
@@ -361,18 +361,22 @@
     <!-- ── Mobile Bottom Nav — Meds active ── -->
     <nav
         class="fixed bottom-0 left-0 w-full bg-white flex justify-around items-center h-16 border-t border-slate-200 md:hidden z-50">
-        <a href="Pat_Homepage.html" class="flex flex-col items-center gap-1 text-slate-500 font-normal">
+        <a href="pat_homepage.html" class="flex flex-col items-center gap-1 text-slate-500 font-normal">
             <span class="material-symbols-outlined">dashboard</span>
             <span class="text-[10px]" data-i18n="home">Home</span>
         </a>
-        <a href="Pat_MedRecords.html" class="flex flex-col items-center gap-1 text-slate-500 font-normal">
+        <a href="pat_MedRecords.html" class="flex flex-col items-center gap-1 text-slate-500 font-normal">
             <span class="material-symbols-outlined">history_edu</span>
             <span class="text-[10px]" data-i18n="records">Records</span>
         </a>
-        <a href="Pat_Medications.html" class="flex flex-col items-center gap-1 text-[#0F52BA] font-bold">
+        <a href="pat_medications.html" class="flex flex-col items-center gap-1 text-[#0F52BA] font-bold">
             <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">medication</span>
             <span class="text-[10px]" data-i18n="meds">Meds</span>
         </a>
+        <button id="mobile-logout-btn" class="flex flex-col items-center gap-1 text-slate-500 font-normal hover:bg-slate-50 transition-colors">
+            <span class="material-symbols-outlined">logout</span>
+            <span class="text-[10px]" data-i18n="sign_out">Logout</span>
+        </button>
     </nav>
 
     <!-- Transition overlay -->
@@ -402,8 +406,9 @@
         });
     </script>
     <script type="module">
-        import { db } from "../../firebaseConfig.js";
+        import { db, auth } from "../../firebaseConfig.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         document.addEventListener('DOMContentLoaded', async () => {
             const patientUID = sessionStorage.getItem("patientUID");
@@ -508,6 +513,30 @@
                 `;
             }
         });
+
+        // ── Logout Functionality ──
+        const performSignOut = () => {
+            signOut(auth).then(() => {
+                sessionStorage.removeItem("patientUID");
+                window.location.href = "pat_login.html";
+            }).catch((error) => {
+                console.error("Sign out error:", error);
+            });
+        };
+
+        document.querySelectorAll("a").forEach((link) => {
+            if (link.textContent.includes("Sign Out")) {
+                link.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    performSignOut();
+                });
+            }
+        });
+
+        const mobileLogoutBtn = document.getElementById("mobile-logout-btn");
+        if (mobileLogoutBtn) {
+            mobileLogoutBtn.addEventListener("click", performSignOut);
+        }
     </script>
 </body>
 

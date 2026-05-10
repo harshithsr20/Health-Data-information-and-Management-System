@@ -323,7 +323,7 @@
                 <span data-i18n="nav_dashboard">Dashboard</span>
             </a>
             <!-- Medical Records — ACTIVE -->
-            <a href="code2.html"
+            <a href="pat_MedRecords.html"
                 class="flex items-center gap-3 px-4 py-3 bg-white text-[#0F52BA] font-bold border-l-4 border-[#0F52BA] rounded-r-lg cursor-pointer active:scale-95 transition-all">
                 <span class="material-symbols-outlined">history_edu</span>
                 <span data-i18n="nav_medical_records">Medical Records</span>
@@ -450,7 +450,7 @@
             <span class="material-symbols-outlined">dashboard</span>
             <span class="text-[10px]" data-i18n="home">Home</span>
         </a>
-        <a href="code2.html" class="flex flex-col items-center gap-1 text-[#0F52BA] font-bold">
+        <a href="pat_MedRecords.html" class="flex flex-col items-center gap-1 text-[#0F52BA] font-bold">
             <span class="material-symbols-outlined active-tab-indicator"
                 style="font-variation-settings:'FILL' 1">history_edu</span>
             <span class="text-[10px]" data-i18n="records">Records</span>
@@ -459,6 +459,10 @@
             <span class="material-symbols-outlined">medication</span>
             <span class="text-[10px]" data-i18n="meds">Meds</span>
         </a>
+        <button id="mobile-logout-btn" class="flex flex-col items-center gap-1 text-slate-500 font-normal hover:bg-slate-50 transition-colors">
+            <span class="material-symbols-outlined">logout</span>
+            <span class="text-[10px]" data-i18n="sign_out">Logout</span>
+        </button>
     </nav>
 
     <!-- Transition overlay -->
@@ -780,19 +784,28 @@
         fetchReports();
 
         // ── Sign Out ──────────────────────────────────────────────────────────
+        const performSignOut = () => {
+            signOut(auth).then(() => {
+                sessionStorage.removeItem("patientUID");
+                window.location.href = "pat_login.html";
+            }).catch((error) => {
+                console.error("Sign out error:", error);
+            });
+        };
+
         document.querySelectorAll("a").forEach((link) => {
             if (link.textContent.includes("Sign Out")) {
                 link.addEventListener("click", (e) => {
                     e.preventDefault();
-                    signOut(auth).then(() => {
-                        sessionStorage.removeItem("patientUID");
-                        window.location.href = "pat_login.html";
-                    }).catch((error) => {
-                        console.error("Sign out error:", error);
-                    });
+                    performSignOut();
                 });
             }
         });
+
+        const mobileLogoutBtn = document.getElementById("mobile-logout-btn");
+        if (mobileLogoutBtn) {
+            mobileLogoutBtn.addEventListener("click", performSignOut);
+        }
     </script>
 </body>
 
