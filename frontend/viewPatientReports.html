@@ -559,7 +559,8 @@
                 }
 
                 // 4. Send extracted text to our Groq backend endpoint
-                const PDF_AI_URL = "http://localhost:3001/api/analyze-pdf-text";
+                const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' ? 'http://localhost:3001' : '';
+                const PDF_AI_URL = `${API_BASE}/api/analyze-pdf-text`;
                 const response = await fetch(PDF_AI_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -636,7 +637,8 @@
         });
 
         // ═══════════ AI Patient History Analysis ═══════════════════════════════
-        const AI_SERVER_URL = "http://localhost:3001/api/analyze";
+        const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' ? 'http://localhost:3001' : '';
+        const AI_SERVER_URL = `${API_BASE}/api/analyze`;
 
         const aiPatientIdInput = document.getElementById("ai-patient-id");
         const aiAnalyzeBtn = document.getElementById("ai-analyze-btn");

@@ -14,6 +14,7 @@ const medRecordsLink = document.getElementById("medical-records-link");
 const mobileMedRecordsLink = document.getElementById("mobile-medical-records-link");
 const medicationsLink = document.getElementById("medications-link");
 const mobileMedicationsLink = document.getElementById("mobile-medications-link");
+const mobileLogoutBtn = document.getElementById("mobile-logout-btn");
 const careTeamLink = document.getElementById("care-team-link");
 const changePasswordLink = document.getElementById("change-password-link");
 
@@ -90,7 +91,8 @@ async function fetchAIOverview(patientData) {
 
     try {
         const language = window.HDIMS_I18N?.getLanguage?.() || "en";
-        const response = await fetch("http://localhost:3001/api/patient-overview", {
+        const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' ? 'http://localhost:3001' : '';
+        const response = await fetch(`${API_BASE}/api/patient-overview`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ patientData, language }),
@@ -241,6 +243,7 @@ async function loadMedications(uid) {
 
 // ── Load Care Team (sub-collection) ──────────────────────────────────────────
 async function loadCareTeam(uid) {
+    if (!careTeamList) return;
     try {
         const teamRef = collection(db, "Patients", uid, "careTeam");
         const teamSnap = await getDocs(teamRef);
@@ -276,57 +279,62 @@ async function loadCareTeam(uid) {
 }
 
 // ── Logout Functionality ─────────────────────────────────────────────────────
+function performSignOut() {
+    signOut(auth).then(() => {
+        sessionStorage.removeItem("patientUID");
+        window.location.href = "pat_login.html";
+    }).catch((error) => {
+        console.error("Sign out error:", error);
+    });
+}
+
 const signOutLinks = document.querySelectorAll("a");
 signOutLinks.forEach((link) => {
     if (link.textContent.includes("Sign Out")) {
         link.addEventListener("click", (e) => {
             e.preventDefault();
-            signOut(auth).then(() => {
-                sessionStorage.removeItem("patientUID");
-                window.location.href = "pat_login.html";
-            }).catch((error) => {
-                console.error("Sign out error:", error);
-            });
+            performSignOut();
         });
     }
 });
 
+if (mobileLogoutBtn) {
+    mobileLogoutBtn.addEventListener("click", () => {
+        performSignOut();
+    });
+}
+
 // ── Navigation with Transition ───────────────────────────────────────────────
-function navigateToMedRecords(e) {
+function navigateWithTransition(e, url) {
     e.preventDefault();
-    document.body.style.transition = "opacity 0.3s ease";
-    document.body.style.opacity = 0;
+    const overlay = document.getElementById("transition-overlay");
+    if (overlay) overlay.classList.add("active");
+    document.body.classList.add("page-exit");
     setTimeout(() => {
-        window.location.href = "Pat_MedRecords.html";
-    }, 300);
+        window.location.href = url;
+    }, 240);
+}
+
+function navigateToMedRecords(e) {
+    navigateWithTransition(e, "pat_MedRecords.html");
 }
 
 function navigateToMedications(e) {
-    e.preventDefault();
-    document.body.style.transition = "opacity 0.3s ease";
-    document.body.style.opacity = 0;
-    setTimeout(() => {
-        window.location.href = "pat_medications.html";
-    }, 300);
+    navigateWithTransition(e, "pat_medications.html");
 }
 
 function navigateToCareTeam(e) {
-    e.preventDefault();
-    document.body.style.transition = "opacity 0.3s ease";
-    document.body.style.opacity = 0;
-    setTimeout(() => {
-        window.location.href = "pat_CareTeam.html";
-    }, 300);
+    navigateWithTransition(e, "pat_CareTeam.html");
 }
 
 function navigateToChangePassword(e) {
-    e.preventDefault();
-    document.body.style.transition = "opacity 0.3s ease";
-    document.body.style.opacity = 0;
-    setTimeout(() => {
-        window.location.href = "change_password.html";
-    }, 300);
+    navigateWithTransition(e, "change_password.html");
 }
+
+window.addEventListener('pageshow', function () {
+    const overlay = document.getElementById('transition-overlay');
+    if (overlay) overlay.classList.remove('active');
+});
 
 if (medRecordsLink) medRecordsLink.addEventListener("click", navigateToMedRecords);
 if (mobileMedRecordsLink) mobileMedRecordsLink.addEventListener("click", navigateToMedRecords);
