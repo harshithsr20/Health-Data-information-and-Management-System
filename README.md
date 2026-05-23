@@ -28,6 +28,25 @@ Welcome to **HDIMS**, the future of medical data organization! HDIMS is a compre
 
 ---
 
+## 🔐 Default Login Credentials
+
+### Hospital Admin
+- **ID:** `001-0001`
+- **Password:** `default2`
+
+### Doctor
+- **ID:** `001-0001-00001`
+- **Password:** `deepti`
+
+### Patient
+For viewing and updating the patient database, as well as patient login:
+- **ID:** `001-AA0002`
+- **Password:** `koushik`
+
+**Note:** You can create your own doctor's ID to log in, as well as your own patient ID. All of this procedure is done in the **Hospital Admin** page.
+
+---
+
 ## 🛠️ Tech Stack
 
 - **Frontend**: HTML5, CSS3, Vanilla JavaScript
